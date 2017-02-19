@@ -989,6 +989,44 @@
         return registry.interactions;
     };
     /**
+     * @description [Remove specific interaction.]
+     * @param {String} name   [The interaction ID.]
+     * @return {Boolean} [Boolean indicating whether the interaction was removed or not.]
+     */
+    library.remove = function(id) {
+        // return if no ID provided
+        if (!id) return false;
+        // get the interactions
+        var interactions = library.interactions();
+        // loop over interactions until the ID is matched...
+        for (var i = 0, l = interactions.length; i < l; i++) {
+            // cache the interaction...
+            var interaction = interactions[i];
+            if (interaction.options.id === id) {
+                // remove interaction...
+                interaction.remove();
+                return true; // the interaction was removed!
+            }
+        }
+        return false; // no interaction removed
+    };
+    /**
+     * @description [Removes all interactions.]
+     * @return {Undefined}     [Nothing is returned.]
+     */
+    library.removeAll = function() {
+        // get the interactions
+        var interactions = library.interactions();
+        // loop over interactions until the ID is matched...
+        // **loop in reverse as the interaction remove method
+        // mutates the interactions array and therefore changes
+        // the arrays length.
+        for (var i = (interactions.length - 1); i >= 0; i--) {
+            // remove interaction...
+            interactions[i].remove();
+        }
+    };
+    /**
      * @description [Returns all handlers.]
      * @return {Array} [The handlers in an array.]
      */
