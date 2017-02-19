@@ -65,6 +65,18 @@ var interaction = new Interaction("Main Body Click.");
 Interaction.interactions();
 ```
 
+**Interaction.remove** &mdash; Removes interaction with matching provided ID.
+
+```js
+Interaction.remove("interaction_id");
+```
+
+**Interaction.removeAll** &mdash; Removes all interactions.
+
+```js
+Interaction.removeAll();
+```
+
 **Interaction.handlers** &mdash; Returns an object containing all the handlers.
 
 ```js
