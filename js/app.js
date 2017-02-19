@@ -64,7 +64,8 @@ document.onreadystatechange = function() {
 
         // create new interactions
 
-        new Interaction()
+        new Interaction("Window Resize!")
+            .id("test123")
             .on("resize")
             .anchors(window)
             .handler("window_resize")
