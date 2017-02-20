@@ -20,8 +20,7 @@ Small library for event handling.
 <a name="what-it-does"></a>
 ### What It Does
 
-* Create/manage/disable/enable events
-* List all events made
+* Create, Remove, Manage (list / disable / enable) events
 
 <a name="add-to-project"></a>
 ### Add To Project
@@ -63,6 +62,14 @@ var interaction = new Interaction("Main Body Click.");
 
 ```js
 Interaction.interactions();
+```
+
+**Interaction.interactionsFor** &mdash; Returns all interactions where the provided element was used as an anchor.
+
+```js
+Interaction.interactionsFor(document);
+Interaction.interactionsFor(window);
+Interaction.interactionsFor(document.getElementById("container"));
 ```
 
 **Interaction.remove** &mdash; Removes interaction with matching provided ID.
