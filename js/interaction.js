@@ -989,6 +989,26 @@
         return registry.interactions;
     };
     /**
+     * @description [Returns all interactions where the provided element was used as an anchor.]
+     * @return {Array} [An array of the interactions where the provided element was used as an anchor.]
+     */
+    library.interactionsFor = function(anchor) {
+        // get the interactions
+        var interactions = library.interactions(),
+            list = [];
+        // loop over interactions...
+        for (var i = 0, l = interactions.length; i < l; i++) {
+            // cache the interaction...
+            var interaction = interactions[i];
+            // cache the anchors list
+            var anchors = interaction.options.anchors;
+            // add the interaction to the list...
+            if (-~anchors.indexOf(anchor)) list.push(interaction);
+        }
+        // return the associated interactions
+        return list;
+    };
+    /**
      * @description [Remove specific interaction.]
      * @param {String} name   [The interaction ID.]
      * @return {Boolean} [Boolean indicating whether the interaction was removed or not.]
