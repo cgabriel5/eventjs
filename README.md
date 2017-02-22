@@ -72,6 +72,18 @@ Interaction.interactionsFor(window);
 Interaction.interactionsFor(document.getElementById("container"));
 ```
 
+**Interaction.disableAll** &mdash; Disables all interactions.
+
+```js
+Interaction.disableAll();
+```
+
+**Interaction.enableAll** &mdash; Enables all interactions.
+
+```js
+Interaction.enableAll();
+```
+
 **Interaction.remove** &mdash; Removes interaction with matching provided ID.
 
 ```js
