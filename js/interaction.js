@@ -1009,6 +1009,36 @@
         return list;
     };
     /**
+     * @description [Disables all interactions.]
+     * @return {Undefined}     [Nothing is returned.]
+     */
+    library.disableAll = function() {
+        // get the interactions
+        var interactions = library.interactions();
+        // loop over interactions...
+        for (var i = 0, l = interactions.length; i < l; i++) {
+            // cache the interaction...
+            var interaction = interactions[i];
+            // disable the interaction
+            interaction.disable();
+        }
+    };
+    /**
+     * @description [Enables all interactions.]
+     * @return {Undefined}     [Nothing is returned.]
+     */
+    library.enableAll = function() {
+        // get the interactions
+        var interactions = library.interactions();
+        // loop over interactions...
+        for (var i = 0, l = interactions.length; i < l; i++) {
+            // cache the interaction...
+            var interaction = interactions[i];
+            // enable the interaction
+            interaction.enable();
+        }
+    };
+    /**
      * @description [Remove specific interaction.]
      * @param {String} name   [The interaction ID.]
      * @return {Boolean} [Boolean indicating whether the interaction was removed or not.]
