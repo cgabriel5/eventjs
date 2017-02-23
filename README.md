@@ -9,6 +9,7 @@ Small library for event handling.
 [Access Library](#access-library)  
 [Instance Creation](#instance-creation)  
 [API](#api)  
+* [Global Method Table](#global-method-table)  
 * [Global Methods](#global-methods)  
 * [Instance Methods](#instance-methods)  
 
@@ -54,6 +55,24 @@ var interaction = new Interaction("Main Body Click.");
 
 <a name="api"></a>
 ### API
+
+<a name="global-method-table"></a>
+### Global Method Table
+
+Method | Function
+------------ | -------------
+**interactions** | Returns an array of all the created interactions
+**interactionsFor** | Returns all interactions where the provided element was used as an anchor
+**disableAll** | Disables all interactions
+**enableAll** | Enables all interactions
+**remove** | Removes interaction with matching provided ID
+**removeAll** | Removes all interactions
+**handlers** | Returns an object containing all the handlers
+**filters** | Returns an object containing all the filters
+**addFilter** | Adds a filter to the internal filters registry
+**removeFilter** | Removes a filter from the internal filters registry
+**addHandler** | Adds a handler to the internal handlers registry
+**removeHandler** | Removes a handler from the internal handlers registry
 
 <a name="global-methods"></a>
 #### Global Methods
@@ -120,13 +139,13 @@ Interaction.addFilter("filer_name", function(e) { /*logic*/ });
 Interaction.removeFilter("filer_name");
 ```
 
-**Interaction.addHandler** &mdash; Adds a filter to the internal handlers registry.
+**Interaction.addHandler** &mdash; Adds a handler to the internal handlers registry.
 
 ```js
 Interaction.addHandler("filer_name", function(e) { /*logic*/ });
 ```
 
-**Interaction.removeHandler** &mdash; Removes a filter from the internal handlers registry.
+**Interaction.removeHandler** &mdash; Removes a handler from the internal handlers registry.
 
 ```js
 Interaction.removeHandler("filer_name");
