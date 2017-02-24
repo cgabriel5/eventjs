@@ -9,10 +9,12 @@ Small library for event handling.
 [Access Library](#access-library)  
 [Instance Creation](#instance-creation)  
 [API](#api)  
-* [Global Method Table](#global-method-table)  
-    * [Global Methods](#global-methods)  
-* [Instance Method Table](#instance-method-table)  
-    * [Instance Methods](#instance-methods)  
+* [Global](#global-api)
+    * [QuickTable](#global-quicktable-reference)  
+    * [Methods](#global-methods-long)  
+* [Instance](#instance-api)
+    * [QuickTable](#instance-quicktable-reference)  
+    * [Methods](#instance-methods-long) 
 
 [Usage](#usage)  
 
@@ -56,9 +58,12 @@ var interaction = new Interaction("Main Body Click.");
 
 <a name="api"></a>
 ### API
+ 
+<a name="global-api"></a>
+### API &mdash; Global
 
-<a name="global-method-table"></a>
-### Global Method Table
+<a name="global-quicktable-reference"></a>
+### Global QuickTable Reference
 
 Method | Function
 ------------ | -------------
@@ -75,8 +80,8 @@ Method | Function
 **addHandler** | Adds a handler to the internal handlers registry
 **removeHandler** | Removes a handler from the internal handlers registry
 
-<a name="global-methods"></a>
-#### Global Methods
+<a name="global-methods-long"></a>
+### Global Methods
 
 **Interaction.interactions** &mdash; Returns an array of all the created interactions.
 
@@ -152,8 +157,11 @@ Interaction.addHandler("filer_name", function(e) { /*logic*/ });
 Interaction.removeHandler("filer_name");
 ```
 
-<a name="instance-method-table"></a>
-### Instance Method Table
+<a name="instance-api"></a>
+### API &mdash; Instance
+
+<a name="instance-quicktable-reference"></a>
+### Instance QuickTable Reference
 
 Method | Function
 ------------ | -------------
@@ -172,7 +180,7 @@ Method | Function
 **disable** | Disables the event
 **remove** | Removes the event
 
-<a name="instance-methods"></a>
+<a name="instance-methods-long"></a>
 ### Instance Methods
 
 **interaction.id** &mdash; Set the interaction ID.
@@ -279,7 +287,7 @@ interaction.remove();
 
 For a better understanding check out `index.html` and `app.js`. `app.js` contains examples showing how the library is used.
 
-Note: The filters in these examples use [FunnelJS](https://github.com/cgabriel5/funneljs). [FunnelJS](https://github.com/cgabriel5/funneljs) is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering can be done using VanillaJS. The library is just very useful for things like event delegation.
+**Note:** The filters in these examples use [FunnelJS](https://github.com/cgabriel5/funneljs). [FunnelJS](https://github.com/cgabriel5/funneljs) is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering can be done using VanillaJS. The library is just very useful for things like event delegation.
 
 <a name="contributing"></a>
 ### Contributing
