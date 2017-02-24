@@ -10,8 +10,9 @@ Small library for event handling.
 [Instance Creation](#instance-creation)  
 [API](#api)  
 * [Global Method Table](#global-method-table)  
-* [Global Methods](#global-methods)  
-* [Instance Methods](#instance-methods)  
+    * [Global Methods](#global-methods)  
+* [Instance Method Table](#instance-method-table)  
+    * [Instance Methods](#instance-methods)  
 
 [Usage](#usage)  
 
@@ -151,6 +152,26 @@ Interaction.addHandler("filer_name", function(e) { /*logic*/ });
 Interaction.removeHandler("filer_name");
 ```
 
+<a name="instance-method-table"></a>
+### Instance Method Table
+
+Method | Function
+------------ | -------------
+**id** | Set the interaction ID
+**on** | The events to listen for
+**namespace** | The namespace the events should be under
+**anchors** | The elements to attach the events to
+**filters** | If using event delegation, filters can be used to filter out the wanted element(s)
+**fireCount** | The amount of times the handler should fire
+**capture** | Should the event capture
+**capture** | Should the event be passive
+**debounce** | Should the event be debounced
+**throttle** | Should the event be throttled
+**handler** | The event handler
+**enable** | Enables the event
+**disable** | Disables the event
+**remove** | Removes the event
+
 <a name="instance-methods"></a>
 ### Instance Methods
 
@@ -185,8 +206,7 @@ var $cont = document.getElementById("cont");
 interaction.anchors(document, window, $cont);
 ```
 
-**interaction.filters** &mdash; If using event delegation, filters can be used
-filter out the wanted element(s).
+**interaction.filters** &mdash; If using event delegation, filters can be used to filter out the wanted element(s).
 
 ```js
 // N amount of filters can be passed in.
