@@ -297,7 +297,13 @@
                     // -- browser mutual event targets
                     //
                     // the element that trigger/dispatched the event
-                    "target": (e.target || null),
+                    // **Note: when using the trigger method to trigger an event
+                    // a target can be provided. this provided target will passed
+                    // into the the targets.target key, as shown below. this syntheticTarget
+                    // is not used or provided by any browser and is only used when triggering
+                    // an event with the trigger method (when the event you want to trigger
+                    // is using delegation).
+                    "target": (e.syntheticTarget || e.target || null),
                     // event info: {https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget}
                     // always refers to the element that the event handler was attached to
                     "currentTarget": (e.currentTarget || null),
@@ -371,6 +377,10 @@
                     // filters and the handler should not be run
                     if (i === (l - 1) && !delegate) return;
                 }
+
+                // add the delegate to the targets object
+                // if no delegate is detected it defaults to the currentTarget element
+                targets.delegateTarget = (delegate || targets.currentTarget);
 
                 // finally...invoke the user handler
                 handler.call((delegate || anchor), e, targets, filter_name);
@@ -1007,6 +1017,39 @@
         }
         // return the associated interactions
         return list;
+    };
+    library.trigger = function(options) {
+        // cache the options
+        var anchor = (options.anchor || null),
+            event = (options.event || ""),
+            target = (options.target || null),
+            type = (options.type || "Native"),
+            options_ = (options.options || {}),
+            data = (options.data || null),
+            // detect which function to use (depends on whether data was provided)
+            fn = (options.fn || (data ? CustomEvent : Event));
+
+        // create the event
+        var synthetic_event = new fn(event, Object.assign({ "triggered": true, "bubbles": true, "cancelable": false, "scoped": false, "composed": false, "detail": data }, options_));
+        // add a custom property to the event. this prop denotes the
+        // event is a synthetic created event
+        synthetic_event.isSynthetic = true;
+        // set the user target element if provided. this is only needed
+        // when an event is using event delegation. passing the correct
+        // target element will allow the interaction to fire as normal. if
+        // using event delegation and the correct target is not provided
+        // the event will never fire as the filter will always use the element
+        // that the event was originally anchored to.
+        if (target) {
+            synthetic_event.syntheticTarget = target;
+            synthetic_event.delegateTarget = target;
+        }
+        // dispatch the event and check if preventDefault was called
+        var cancelled = !anchor.dispatchEvent(synthetic_event);
+
+        // handle possible event cancellation???
+        // if (cancelled) { ...a handler called preventDefault
+        // else the event was triggered
     };
     /**
      * @description [Disables all interactions.]
