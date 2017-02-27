@@ -1108,11 +1108,11 @@
     }
     /**
      * @description [Trigger an interaction.]
-     * @param  {String} id      [The ID of the interaction to trigger.]
-     * @param  {Object} options [The event options to use.]
-     * @return {Undefined}     [Nothing is returned.]
+     * @param  {String} id           [The ID of the interaction to trigger.]
+     * @param  {Object} arguments[1] [The event options to use.]
+     * @return {Undefined}           [Nothing is returned.]
      */
-    library.trigger = function(id, options) {
+    library.trigger = function(id) {
         // get the interaction
         var interaction = library.interaction(id);
         // if no interaction is found, return
