@@ -61,6 +61,9 @@ document.onreadystatechange = function() {
         Interaction.addHandler("input_mouseover", function(e, targets, filter_name) {
             console.log("Mouseover Input!", filter_name);
         });
+        Interaction.addHandler("custom_event", function(e, targets, filter_name) {
+            console.log("Custom Event!", filter_name, e);
+        });
 
         // create new interactions
 
@@ -70,11 +73,12 @@ document.onreadystatechange = function() {
             .anchors(window)
             .handler("window_resize")
             // .throttle(3000)
-            // .debounce(300)
+            .debounce(300)
             .fireCount(250)
             .enable();
 
         new Interaction("Main Body Click Interaction")
+            .id("bodyClick")
             .on("click")
             .anchors(document)
             .filters("main_body_click", "input_click")
@@ -91,6 +95,7 @@ document.onreadystatechange = function() {
             .enable();
 
         new Interaction("Body Scroll")
+            .id("scroll")
             .on("mousewheel")
             .anchors(document)
             .handler("body_mouswheel")
@@ -112,6 +117,7 @@ document.onreadystatechange = function() {
             .enable();
 
         new Interaction("Input Mouseenter")
+            .id("mouseenter")
             .on("mouseover")
             .namespace("input")
             .anchors(document)
@@ -119,6 +125,25 @@ document.onreadystatechange = function() {
             .handler("input_mouseover")
             .enable();
 
+        // Custom Event Example
+        new Interaction("Custom Event")
+            .id("custom")
+            .on(":build")
+            .anchors(document)
+            .handler("custom_event")
+            .enable();
+
     }
+
+    // trigger examples (no delegation)
+    window.app.libs.Interaction.trigger("custom", { data: [1, 2, 3] });
+    window.app.libs.Interaction.trigger("test123", { data: Date.now() });
+    window.app.libs.Interaction.trigger("scroll"); // no options
+
+    // trigger examples (with delegation)
+    var $cont = document.getElementById("cont");
+    window.app.libs.Interaction.trigger("bodyClick", { target: $cont, data: { "key": "value" } });
+    var $first_input = window.app.libs.Funnel(document.body).all().tags("input").getElement();
+    window.app.libs.Interaction.trigger("mouseenter", { target: $first_input });
 
 };
