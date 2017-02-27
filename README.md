@@ -69,6 +69,7 @@ Method | Function
 ------------ | -------------
 **interactions** | Returns an array of all the created interactions
 **interactionsFor** | Returns all interactions where the provided element was used as an anchor
+**trigger** | Triggers an interaction
 **disableAll** | Disables all interactions
 **enableAll** | Enables all interactions
 **remove** | Removes interaction with matching provided ID
@@ -95,6 +96,37 @@ Interaction.interactions();
 Interaction.interactionsFor(document);
 Interaction.interactionsFor(window);
 Interaction.interactionsFor(document.getElementById("container"));
+```
+
+**Interaction.trigger** &mdash; Triggers an interaction.
+
+```js
+// signature
+Interaction.trigger("interaction_id", options);
+
+// possible options (optional)
+var options = {
+    // if using event delegation, provide the correct target element
+    // this target element will be passed to the filter function
+    "target": document.getElementById("cont"),
+    // event options
+    "options": { "bubbles": true, "cancelable": false, "scoped": false, "composed" },
+    // if the event is a custom event data can be provided,
+    // whatever can be passed as data
+    "data": [1, 2, 3, true]
+};
+
+// trigger examples (no delegation)
+Interaction.trigger("custom", { data: [1, 2, 3] });
+Interaction.trigger("test123", { data: Date.now() });
+Interaction.trigger("scroll"); // no options
+
+// trigger examples (with delegation)
+var $cont = document.getElementById("cont");
+Interaction.trigger("bodyClick", { target: $cont, data: { "key": "value" } });
+
+var $first_input = window.app.libs.Funnel(document.body).all().tags("input").getElement();
+Interaction.trigger("mouseenter", { target: $first_input });
 ```
 
 **Interaction.disableAll** &mdash; Disables all interactions.
