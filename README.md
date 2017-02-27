@@ -106,14 +106,24 @@ Interaction.trigger("interaction_id", options);
 
 // possible options (optional)
 var options = {
-    // if using event delegation, provide the correct target element
-    // this target element will be passed to the filter function
-    "target": document.getElementById("cont"),
+    // if using event delegation, provide the correct target elements so 
+    // that the events function as if they were naturally triggered.
+    // these target elements will be passed to interactions filter functions.
+    "targets": {
+        "target": document.getElementById("cont"),
+        // "currentTarget": <ElementNode>,
+        // "relatedTarget": <ElementNode>,
+        // "srcElement": <ElementNode>,
+        // "fromElement": <ElementNode>,
+        // "toElement": <ElementNode>,
+        // "explicitOriginalTarget": <ElementNode>,
+        // "originalTarget": <ElementNode>
+    },
     // event options
     "options": { "bubbles": true, "cancelable": false, "scoped": false, "composed" },
     // if the event is a custom event data can be provided,
     // whatever can be passed as data
-    "data": [1, 2, 3, true]
+    "data": { "key": "value" }
 };
 
 // trigger examples (no delegation)
@@ -123,10 +133,18 @@ Interaction.trigger("scroll"); // no options
 
 // trigger examples (with delegation)
 var $cont = document.getElementById("cont");
-Interaction.trigger("bodyClick", { target: $cont, data: { "key": "value" } });
-
-var $first_input = window.app.libs.Funnel(document.body).all().tags("input").getElement();
-Interaction.trigger("mouseenter", { target: $first_input });
+Interaction.trigger("bodyClick", {
+    targets: {
+        target: $cont
+    },
+    data: { "key": "value" }
+});
+var $first_input = Funnel(document.body).all().tags("input").getElement();
+Interaction.trigger("mouseenter", {
+    targets: {
+        target: $first_input
+    }
+});
 ```
 
 **Interaction.disableAll** &mdash; Disables all interactions.
