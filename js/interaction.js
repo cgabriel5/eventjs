@@ -463,7 +463,7 @@
                 // loop over events
                 for (var j = 0, ll = events.length; j < ll; j++) {
                     // cache the current event
-                    var event = events[j];
+                    var event = events[j][0];
                     // attach the event
                     remove_event(_, anchor, event, handlers[i], options_);
                 }
@@ -587,6 +587,31 @@
                     args = args.map(function(event) {
                         return ((is_ff && event === "mousewheel") ? "DOMMouseScroll" : event);
                     });
+
+                    // add the best determined event constructor to each event
+                    //
+                    // supported events are listed below. check what event constructor your specific event needs
+                    // as non detected events (anything else that is not listed below) will result in the default
+                    // Event constructor. for other events refer to:
+                    // [https://developer.mozilla.org/en-US/docs/Web/Events#Standard_events]
+                    var UIEvent = " abort error load resize scroll select unload ",
+                        MouseEvent = " click contextmenu dblclick mousedown mouseenter mouseleave mousemove mouseout mouseover mouseup show ",
+                        func;
+                    for (var i = 0, l = args.length; i < l; i++) {
+                        // cache the current event
+                        var event = args[i];
+                        // check if a function constructor name was provided
+                        // if one was provided, that one will be used. otherwise,
+                        // we do our best to determine what to use.
+                        if (event.charAt(0) !== ":") {
+                            // determine what best to use...
+                            if (-~UIEvent.indexOf(event)) func = "UIEvent";
+                            else if (-~MouseEvent.indexOf(event)) func = "MouseEvent";
+                            else func = "Event"; // default
+                        } else func = "CustomEvent";
+                        // amend the argument
+                        args[i] = [event, func];
+                    }
 
                     // add events to array
                     // {http://stackoverflow.com/a/15444261}
@@ -894,7 +919,7 @@
                             // loop over events
                             for (var j = 0, ll = events.length; j < ll; j++) {
                                 // cache the current event
-                                var event = events[j];
+                                var event = events[j][0];
 
                                 // attach the event
                                 create_event(_, id, anchor, event, namespace, fire_count, handler, options_, filters);
@@ -1018,39 +1043,150 @@
         // return the associated interactions
         return list;
     };
-    library.trigger = function(options) {
-        // cache the options
-        var anchor = (options.anchor || null),
-            event = (options.event || ""),
-            target = (options.target || null),
-            type = (options.type || "Native"),
-            options_ = (options.options || {}),
-            data = (options.data || null),
-            // detect which function to use (depends on whether data was provided)
-            fn = (options.fn || (data ? CustomEvent : Event));
+    library.interaction = function(id) {
+        // return if no ID provided
+        if (!id) return null;
+        // get the interactions
+        var interactions = library.interactions();
+        // loop over interactions until the ID is matched...
+        for (var i = 0, l = interactions.length; i < l; i++) {
+            // cache the interaction...
+            var interaction = interactions[i];
+            if (interaction.options.id === id) {
+                // return the interaction
+                return interaction;
+            }
+        }
+        return null; // no interaction found
+    };
 
-        // create the event
-        var synthetic_event = new fn(event, Object.assign({ "triggered": true, "bubbles": true, "cancelable": false, "scoped": false, "composed": false, "detail": data }, options_));
-        // add a custom property to the event. this prop denotes the
-        // event is a synthetic created event
-        synthetic_event.isSynthetic = true;
+    function create_event_object(type, func, anchor, options) {
+
+        // cache the options
+        var target = (options.target || null),
+            data = (options.data || null);
+
+        // console.log(">>>>>>>>>>>>>>>>>>>>>>>>", func, "<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
+        // create the event object
+        var event = new window[func](type, Object.assign({
+            "bubbles": true,
+            "cancelable": false,
+            "scoped": false,
+            "composed": false,
+            // "detail": data // a custom "data" property is used instead (▼ below)
+        }, (options.options || {})));
+
+        // add custom properties to synthetic event object
+        //
+        // custom isSynthetic property denotes the event is a synthetic event
+        event.isSynthetic = true;
+        // custom data property contains the provided data, is provided
+        event.data = data;
         // set the user target element if provided. this is only needed
         // when an event is using event delegation. passing the correct
         // target element will allow the interaction to fire as normal. if
         // using event delegation and the correct target is not provided
         // the event will never fire as the filter will always use the element
-        // that the event was originally anchored to.
-        if (target) {
-            synthetic_event.syntheticTarget = target;
-            synthetic_event.delegateTarget = target;
-        }
-        // dispatch the event and check if preventDefault was called
-        var cancelled = !anchor.dispatchEvent(synthetic_event);
+        // that the event was originally anchored to, or the currentTarget.
+        event.syntheticTarget = target;
+        // sets the event delegateTarget to the provided target or element that
+        // the event was attached (currentTarget) to if no target is provided.
+        event.delegateTarget = (target || anchor);
 
-        // handle possible event cancellation???
-        // if (cancelled) { ...a handler called preventDefault
-        // else the event was triggered
+        console.log(">>>>>>>>>>>>>.Event", event);
+
+        // return the synthetic event object
+        return event;
+
+    }
+
+    library.trigger = function(id, options) {
+        // get the interaction
+        var interaction = library.interaction(id);
+        // if no interaction is found, return
+        if (!interaction) return;
+
+        // cache the interation options, properties
+        var opts = interaction.options,
+            properties = interaction.properties;
+
+        // get the anchors, events, handlers from the interaction
+        var anchors = opts.anchors,
+            events = opts.events,
+            handler = properties.handlers[0];
+
+        // cache the options argument
+        var options = (arguments[1] || {});
+
+        // run the handler
+        for (var i = 0, l = anchors.length; i < l; i++) {
+            for (var j = 0, ll = events.length; j < ll; j++) {
+                // create the event object
+                var event = create_event_object(events[j][0], events[j][1], anchors[i], options);
+                // call the event handler
+                handler.call(event, event);
+            }
+        }
+
     };
+    // library.trigger2 = function(options) {
+    //     // cache the options
+    //     var anchor = (options.anchor || null),
+    //         event = (options.event || ""),
+    //         target = (options.target || null),
+    //         is_native = (options.isNative || true),
+    //         options_ = (options.options || {}),
+    //         data = (options.data || null),
+    //         // detect which function to use (depends on whether data was provided)
+    //         // for any non-native event use the custom constructor
+    //         constructor_func = (options.fn || "CustomEvent");
+
+    //     // supported events are listed below
+    //     // for other events refer to: [https://developer.mozilla.org/en-US/docs/Web/Events#Standard_events]
+    //     var UIEvent = " abort error load resize scroll select unload ";
+    //     var MouseEvent = " click contextmenu dblclick mousedown mouseenter mouseleave mousemove mouseout mouseover mouseup show ";
+    //     // var Event = " abort afterprint appinstalled audioend audiostart beforeprint cached canplay canplaythrough change chargingchange chargingtimechange checking close devicechange dischargingtimechange DOMContentLoaded downloading durationchange emptied end ended ended error error error error error fullscreenchange fullscreenerror input invalid languagechange levelchange loadeddata loadedmetadata noupdate obsolete offline online open open orientationchange pause pointerlockchange pointerlockerror play playing ratechange readystatechange reset seeked seeking selectstart selectionchange soundend soundstart speechend speechstart stalled start submit success suspend timeupdate updateready voiceschanged visibilitychange volumechange vrdisplayconnected vrdisplaydisconnected vrdisplaypresentchange waiting ";
+
+    //     // check if a function constructor name was provided
+    //     // if one was provided, that one will be used. otherwise,
+    //     // we do our best to determine what to use.
+    //     if (!constructor_func && is_native) {
+    //         // determine what best to use...
+    //         if (-~UIEvent.indexOf(event)) constructor_func = "UIEvent";
+    //         else if (-~MouseEvent.indexOf(event)) constructor_func = "MouseEvent";
+    //         else constructor_func = "Event"; // default
+    //     }
+
+    //     // create the event object
+    //     var event_object = new window[constructor_func](event, Object.assign({
+    //         // add a custom property to the event. this prop denotes the
+    //         // event is a synthetic created event
+    //         "isSynthetic": true,
+    //         "bubbles": true,
+    //         "cancelable": false,
+    //         "scoped": false,
+    //         "composed": false,
+    //         "detail": data
+    //     }, options_));
+
+    //     // set the user target element if provided. this is only needed
+    //     // when an event is using event delegation. passing the correct
+    //     // target element will allow the interaction to fire as normal. if
+    //     // using event delegation and the correct target is not provided
+    //     // the event will never fire as the filter will always use the element
+    //     // that the event was originally anchored to.
+    //     if (target) {
+    //         event_object.syntheticTarget = target;
+    //         event_object.delegateTarget = target;
+    //     }
+    //     // dispatch the event and check if preventDefault was called
+    //     var cancelled = !anchor.dispatchEvent(event_object);
+
+    //     // handle possible event cancellation???
+    //     // if (cancelled) { ...a handler called preventDefault
+    //     // else the event was triggered
+    // };
     /**
      * @description [Disables all interactions.]
      * @return {Undefined}     [Nothing is returned.]
