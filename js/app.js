@@ -40,11 +40,14 @@ document.onreadystatechange = function() {
 
         // register event handlers
 
+        Interaction.addHandler("cont_click", function(e, targets, filter_name) {
+            console.log("Container Clicked!", filter_name, e, targets);
+        });
         Interaction.addHandler("window_resize", function(e, targets, filter_name) {
             console.log("Resized!", filter_name);
         });
         Interaction.addHandler("main_body_click", function(e, targets, filter_name) {
-            console.log("Clicked!", filter_name);
+            console.log("Clicked!", filter_name, e, targets);
         });
         Interaction.addHandler("second_body_click", function(e, targets, filter_name) {
             console.log("Second Clicked!", filter_name);
@@ -66,6 +69,13 @@ document.onreadystatechange = function() {
         });
 
         // create new interactions
+
+        new Interaction("Container click!")
+            .on("click")
+            .anchors(window.app.libs.Funnel("#cont").getElement())
+            .handler("cont_click")
+            .fireCount(4)
+            .enable();
 
         new Interaction("Window Resize!")
             .id("test123")
@@ -142,8 +152,17 @@ document.onreadystatechange = function() {
 
     // trigger examples (with delegation)
     var $cont = document.getElementById("cont");
-    window.app.libs.Interaction.trigger("bodyClick", { target: $cont, data: { "key": "value" } });
+    window.app.libs.Interaction.trigger("bodyClick", {
+        targets: {
+            target: $cont
+        },
+        data: { "key": "value" }
+    });
     var $first_input = window.app.libs.Funnel(document.body).all().tags("input").getElement();
-    window.app.libs.Interaction.trigger("mouseenter", { target: $first_input });
+    window.app.libs.Interaction.trigger("mouseenter", {
+        targets: {
+            target: $first_input
+        }
+    });
 
 };
