@@ -297,13 +297,7 @@
                     // -- browser mutual event targets
                     //
                     // the element that trigger/dispatched the event
-                    // **Note: when using the trigger method to trigger an event
-                    // a target can be provided. this provided target will passed
-                    // into the the targets.target key, as shown below. this syntheticTarget
-                    // is not used or provided by any browser and is only used when triggering
-                    // an event with the trigger method (when the event you want to trigger
-                    // is using delegation).
-                    "target": (e.syntheticTarget || e.target || null),
+                    "target": (e.target || null),
                     // event info: {https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget}
                     // always refers to the element that the event handler was attached to
                     "currentTarget": (e.currentTarget || null),
@@ -328,6 +322,12 @@
                     // do not use: {https://developer.mozilla.org/en-US/docs/Web/API/Event/originalTarget}
                     "originalTarget": (e.originalTarget || null)
                 };
+
+                // get the provided (synthetic targets) and combine with the above targets object
+                if (e.targets) {
+                    targets = Object.assign(targets, e.targets);
+                    console.log(e.type, "has a targets key", targets);
+                }
 
                 // define vars
                 var delegate, filter_name;
@@ -380,6 +380,7 @@
 
                 // add the delegate to the targets object
                 // if no delegate is detected it defaults to the currentTarget element
+                // if (!targets.delegateTarget)
                 targets.delegateTarget = (delegate || targets.currentTarget);
 
                 // finally...invoke the user handler
@@ -1092,16 +1093,24 @@
         event.isSynthetic = true;
         // custom data property contains the provided data, is provided
         event.data = data;
-        // set the user target element if provided. this is only needed
-        // when an event is using event delegation. passing the correct
-        // target element will allow the interaction to fire as normal. if
-        // using event delegation and the correct target is not provided
-        // the event will never fire as the filter will always use the element
-        // that the event was originally anchored to, or the currentTarget.
-        event.syntheticTarget = target;
-        // sets the event delegateTarget to the provided target or element that
-        // the event was attached (currentTarget) to if no target is provided.
-        event.delegateTarget = (target || anchor);
+
+        // create the targets object
+        var targets = Object.assign({
+            "target": null,
+            "currentTarget": anchor,
+            "relatedTarget": null,
+            "srcElement": null,
+            "fromElement": null,
+            "toElement": null,
+            "explicitOriginalTarget": null,
+            "originalTarget": null
+        }, (options.targets || {}));
+
+        // add the targets to the event object
+        // **Note: they are added as a single object as the actual
+        // targets are read-only and cannot be modified. they are
+        // looked up in the "create_event" event.
+        event.targets = targets;
 
         // return the synthetic event object
         return event;
