@@ -1043,6 +1043,11 @@
         // return the associated interactions
         return list;
     };
+    /**
+     * @description [Gets the interaction with the provided ID.]
+     * @param {String} name   [The interaction ID.]
+     * @return {Null|Object} [The interaction if found or null if otherwise.]
+     */
     library.interaction = function(id) {
         // return if no ID provided
         if (!id) return null;
@@ -1059,9 +1064,15 @@
         }
         return null; // no interaction found
     };
-
+    /**
+     * @description [Creates the synthetic event used by the trigger method.]
+     * @param  {String} type         [The event name.]
+     * @param  {String} func         [The event's event constructor function name.]
+     * @param  {HTMLElement} anchor  [The anchor the event is bound to.]
+     * @param  {Object} options      [The event options to use.]
+     * @return {EventObject}         [The newly created synthetic event object.]
+     */
     function create_event_object(type, func, anchor, options) {
-
         // cache the options
         var target = (options.target || null),
             data = (options.data || null);
@@ -1094,9 +1105,13 @@
 
         // return the synthetic event object
         return event;
-
     }
-
+    /**
+     * @description [Trigger an interaction.]
+     * @param  {String} id      [The ID of the interaction to trigger.]
+     * @param  {Object} options [The event options to use.]
+     * @return {Undefined}     [Nothing is returned.]
+     */
     library.trigger = function(id, options) {
         // get the interaction
         var interaction = library.interaction(id);
@@ -1124,7 +1139,6 @@
                 handler.call(event, event);
             }
         }
-
     };
     /**
      * @description [Disables all interactions.]
@@ -1158,7 +1172,7 @@
     };
     /**
      * @description [Remove specific interaction.]
-     * @param {String} name   [The interaction ID.]
+     * @param {String} id   [The interaction ID.]
      * @return {Boolean} [Boolean indicating whether the interaction was removed or not.]
      */
     library.remove = function(id) {
