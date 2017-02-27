@@ -1066,8 +1066,6 @@
         var target = (options.target || null),
             data = (options.data || null);
 
-        // console.log(">>>>>>>>>>>>>>>>>>>>>>>>", func, "<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-
         // create the event object
         var event = new window[func](type, Object.assign({
             "bubbles": true,
@@ -1094,8 +1092,6 @@
         // the event was attached (currentTarget) to if no target is provided.
         event.delegateTarget = (target || anchor);
 
-        console.log(">>>>>>>>>>>>>.Event", event);
-
         // return the synthetic event object
         return event;
 
@@ -1107,7 +1103,7 @@
         // if no interaction is found, return
         if (!interaction) return;
 
-        // cache the interation options, properties
+        // cache the interaction options, properties
         var opts = interaction.options,
             properties = interaction.properties;
 
@@ -1130,63 +1126,6 @@
         }
 
     };
-    // library.trigger2 = function(options) {
-    //     // cache the options
-    //     var anchor = (options.anchor || null),
-    //         event = (options.event || ""),
-    //         target = (options.target || null),
-    //         is_native = (options.isNative || true),
-    //         options_ = (options.options || {}),
-    //         data = (options.data || null),
-    //         // detect which function to use (depends on whether data was provided)
-    //         // for any non-native event use the custom constructor
-    //         constructor_func = (options.fn || "CustomEvent");
-
-    //     // supported events are listed below
-    //     // for other events refer to: [https://developer.mozilla.org/en-US/docs/Web/Events#Standard_events]
-    //     var UIEvent = " abort error load resize scroll select unload ";
-    //     var MouseEvent = " click contextmenu dblclick mousedown mouseenter mouseleave mousemove mouseout mouseover mouseup show ";
-    //     // var Event = " abort afterprint appinstalled audioend audiostart beforeprint cached canplay canplaythrough change chargingchange chargingtimechange checking close devicechange dischargingtimechange DOMContentLoaded downloading durationchange emptied end ended ended error error error error error fullscreenchange fullscreenerror input invalid languagechange levelchange loadeddata loadedmetadata noupdate obsolete offline online open open orientationchange pause pointerlockchange pointerlockerror play playing ratechange readystatechange reset seeked seeking selectstart selectionchange soundend soundstart speechend speechstart stalled start submit success suspend timeupdate updateready voiceschanged visibilitychange volumechange vrdisplayconnected vrdisplaydisconnected vrdisplaypresentchange waiting ";
-
-    //     // check if a function constructor name was provided
-    //     // if one was provided, that one will be used. otherwise,
-    //     // we do our best to determine what to use.
-    //     if (!constructor_func && is_native) {
-    //         // determine what best to use...
-    //         if (-~UIEvent.indexOf(event)) constructor_func = "UIEvent";
-    //         else if (-~MouseEvent.indexOf(event)) constructor_func = "MouseEvent";
-    //         else constructor_func = "Event"; // default
-    //     }
-
-    //     // create the event object
-    //     var event_object = new window[constructor_func](event, Object.assign({
-    //         // add a custom property to the event. this prop denotes the
-    //         // event is a synthetic created event
-    //         "isSynthetic": true,
-    //         "bubbles": true,
-    //         "cancelable": false,
-    //         "scoped": false,
-    //         "composed": false,
-    //         "detail": data
-    //     }, options_));
-
-    //     // set the user target element if provided. this is only needed
-    //     // when an event is using event delegation. passing the correct
-    //     // target element will allow the interaction to fire as normal. if
-    //     // using event delegation and the correct target is not provided
-    //     // the event will never fire as the filter will always use the element
-    //     // that the event was originally anchored to.
-    //     if (target) {
-    //         event_object.syntheticTarget = target;
-    //         event_object.delegateTarget = target;
-    //     }
-    //     // dispatch the event and check if preventDefault was called
-    //     var cancelled = !anchor.dispatchEvent(event_object);
-
-    //     // handle possible event cancellation???
-    //     // if (cancelled) { ...a handler called preventDefault
-    //     // else the event was triggered
-    // };
     /**
      * @description [Disables all interactions.]
      * @return {Undefined}     [Nothing is returned.]
