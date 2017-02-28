@@ -24,7 +24,7 @@ Small library for event handling.
 <a name="what-it-does"></a>
 ### What It Does
 
-* Create, Remove, Manage (list / disable / enable) events
+* Create, Remove, Manage (list / disable / enable / trigger) events
 
 <a name="add-to-project"></a>
 ### Add To Project
