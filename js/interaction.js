@@ -324,10 +324,7 @@
                 };
 
                 // get the provided (synthetic targets) and combine with the above targets object
-                if (e.targets) {
-                    targets = Object.assign(targets, e.targets);
-                    console.log(e.type, "has a targets key", targets);
-                }
+                if (e.targets) targets = Object.assign(targets, e.targets);
 
                 // define vars
                 var delegate, filter_name;
