@@ -1071,10 +1071,6 @@
      * @return {EventObject}         [The newly created synthetic event object.]
      */
     function create_event_object(type, func, anchor, options) {
-        // cache the options
-        var target = (options.target || null),
-            data = (options.data || null);
-
         // create the event object
         var event = new window[func](type, Object.assign({
             "bubbles": true,
@@ -1089,7 +1085,7 @@
         // custom isSynthetic property denotes the event is a synthetic event
         event.isSynthetic = true;
         // custom data property contains the provided data, is provided
-        event.data = data;
+        event.data = (options.data || null);
 
         // create the targets object
         var targets = Object.assign({
