@@ -238,7 +238,7 @@ Method | Function
 ```js
 // **Note: The provided ID must be unique.
 // The ID is optional and only needed if wanted to access the instance
-// from the list of created instances.
+// sometime later to remove, enable/disable, trigger, etc. the interaction.
 interaction.id("some_unique_id");
 ```
 
