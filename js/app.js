@@ -87,6 +87,13 @@ document.onreadystatechange = function() {
             .fireCount(250)
             .enable();
 
+        // A Cloned Interaction
+        new Interaction("My Cloned Interaction", "test123")
+            // change any options here...
+            .reset("id")
+            .id("test456")
+            .enable();
+
         new Interaction("Main Body Click Interaction")
             .id("bodyClick")
             .on("click")
