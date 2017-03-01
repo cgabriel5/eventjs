@@ -493,16 +493,29 @@
             /**
              * @description [The library class constructor.]
              * @param  {String} name [The name of the interaction.]
+             * @param  {String} clone_interaction_id [The id of the interaction to clone options of.]
              * @return {Undefined}     [Nothing is returned.]
              */
-            "constructor__": function(name) {
+            "constructor__": function(name, clone_interaction_id) {
 
                 // if user does not invoke library with new keyword we use it for them by
                 // returning a new instance of the library with the new keyword.
                 if (!(this instanceof Library)) return new Library();
 
+                // cloning vars
+                var parent, parent_options;
+                // if cloning...get the interactions options
+                if (clone_interaction_id) {
+                    // however, make sure the interaction exists
+                    parent = library.interaction(clone_interaction_id);
+                    if (parent) {
+                        // get the options
+                        parent_options = Object.assign({}, parent.options);
+                    }
+                }
+
                 // user provided options
-                this.options = {};
+                this.options = (parent_options || {});
                 // object properties
                 this.properties = {
                     "iid": id(22), // library ID (internal)
@@ -987,6 +1000,39 @@
                         // remove the event
                         zeroed(_);
 
+                    }
+
+                    // return self to chain methods
+                    return _;
+
+                },
+                /**
+                 * @description [Resets the provided interaction options.]
+                 * @param {String} arguments [The N amount of properties to reset.]
+                 * @return {Undefined}     [Nothing is returned.]
+                 */
+                "reset": function() {
+
+                    // cache the object
+                    var _ = this,
+                        defaults = _.defaults,
+                        options = _.options;
+
+                    // option cannot be set if object has been enabled
+                    if (_.properties.locked) return _;
+
+                    // get the properties in need of a reset
+                    var args = to_array(arguments);
+
+                    // loop over args and reset
+                    for (var i = 0, l = args.length; i < l; i++) {
+                        // cache the property
+                        var prop = args[i];
+                        // check that the property is indeed a library prop
+                        if (prop in defaults && defaults.hasOwnProperty(prop)) {
+                            // reset the property
+                            options[prop] = defaults[prop];
+                        }
                     }
 
                     // return self to chain methods
