@@ -44,7 +44,9 @@ var Interaction = window.app.libs.Interaction;
 ### Instance Creation
 
 ```js
-var interaction = new Interaction();
+var interaction = new Interaction(<p1>, <p2>);
+// p1: Optional Interaction Name
+// p2: ID of Interaction To Clone Options Of
 
 // Using the "new" keyword is not necessary. If not used
 // the library will make sure to use it for you.
@@ -54,6 +56,14 @@ var interaction = Interaction();
 // This is not necessary. This only serves as feedback to identify what 
 // the interaction is for.
 var interaction = new Interaction("Main Body Click.");
+
+// Will clone the options off the interaction with the ID of "custom".
+// In the case some options need to be reset/replaced/updated use the 
+// reset method.
+var interaction = new Interaction("Main Body Click.", "custom")
+    .reset("id") // reset the id
+    .id("test456") // add new ID
+    .enable();
 ```
 
 <a name="api"></a>
