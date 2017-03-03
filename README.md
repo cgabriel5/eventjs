@@ -232,7 +232,7 @@ Method | Function
 **filters** | If using event delegation, filters can be used to filter out the wanted element(s)
 **fireCount** | The amount of times the handler should fire
 **capture** | Should the event capture
-**capture** | Should the event be passive
+**passive** | Should the event be passive
 **debounce** | Should the event be debounced
 **throttle** | Should the event be throttled
 **handler** | The event handler
