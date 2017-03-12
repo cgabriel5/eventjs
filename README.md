@@ -44,7 +44,7 @@ var Interaction = window.app.libs.Interaction;
 ### Instance Creation
 
 ```js
-var interaction = new Interaction(<p1>, <p2>);
+var interaction = new Interaction(p1, p2);
 // p1: Optional Interaction Name
 // p2: ID of Interaction To Clone Options Of
 
