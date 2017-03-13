@@ -17,6 +17,8 @@ Small library for event handling.
     * [Methods](#instance-methods-long) 
 
 [Usage](#usage)  
+* [Delegation (targets)](#delegation-targets)  
+    * [Targets Object](#targets-object)
 
 [Contributing](#contributing)  
 [License](#license)  
@@ -196,7 +198,7 @@ Interaction.filters();
 **Interaction.addFilter** &mdash; Adds a filter to the internal filters registry.
 
 ```js
-Interaction.addFilter("filer_name", function(e) { /*logic*/ });
+Interaction.addFilter("filer_name", function(e, targets) { /*logic*/ });
 ```
 
 **Interaction.removeFilter** &mdash; Removes a filter from the internal filters registry.
@@ -208,7 +210,7 @@ Interaction.removeFilter("filer_name");
 **Interaction.addHandler** &mdash; Adds a handler to the internal handlers registry.
 
 ```js
-Interaction.addHandler("filer_name", function(e) { /*logic*/ });
+Interaction.addHandler("filer_name", function(e, targets, filter_name) { /*logic*/ });
 ```
 
 **Interaction.removeHandler** &mdash; Removes a handler from the internal handlers registry.
@@ -348,6 +350,32 @@ interaction.remove();
 For a better understanding check out `index.html` and `app.js`. `app.js` contains examples showing how the library is used.
 
 **Note:** The filters in these examples use [FunnelJS](https://github.com/cgabriel5/funneljs). [FunnelJS](https://github.com/cgabriel5/funneljs) is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering can be done using VanillaJS. The library is just very useful for things like event delegation.
+
+<a name="delegation-targets"></a>
+### Delegation (targets)  
+
+The library provides a normalized object with the event target elements. This object can be accessed as the second parameter like so...
+
+```js
+Interaction.addFilter("filer_name", function(e, targets) { /*logic*/ });
+Interaction.addHandler("filer_name", function(e, targets, filter_name) { /*logic*/ });
+```
+
+Additionally, when event delegation is used the name of the filter function that passed, if any, is returned. This is useful when multiple filter functions are used for a single interaction.
+
+<a name="targets-object"></a>
+### Targets Object
+
+Target (Element) | Description
+------------ | -------------
+**[target](https://developer.mozilla.org/en-US/docs/Web/API/Event/target)** | The element that trigger/dispatched the event | [Target Information](https://developer.mozilla.org/en-US/docs/Web/API/Event/target)
+**[currentTarget](https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget)** | Always refers to the element that the event handler was attached to
+**[relatedTarget](https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/relatedTarget)** | A mouseevent property that refers to the secondary element involved in the event
+**[srcElement](https://developer.mozilla.org/en-US/docs/Web/API/Event/srcElement)** | Avoid using this event target and use `e.target` as this is just an alias for `e.target`
+**[fromElement](http://help.dottoro.com/ljjqfjbs.php)** | Equivalent to FireFox's relatedTarget
+**[toElement](http://help.dottoro.com/ljltrsom.php)** | Equivalent to FireFox's relatedTarget
+**[explicitOriginalTarget](https://developer.mozilla.org/en-US/docs/Web/API/Event/explicitOriginalTarget)** | FireFox specific and should not be used as they are non-standard
+**[originalTarget](https://developer.mozilla.org/en-US/docs/Web/API/Event/originalTarget)** | FireFox specific and should not be used as they are non-standard
 
 <a name="contributing"></a>
 ### Contributing
