@@ -1308,32 +1308,32 @@ document.onreadystatechange = function() {
             .anchors(document)
             .handler("custom_event")
             .enable();
+        // trigger examples (no delegation)
+        Interaction.trigger("intCustomEvent", {
+            data: [1, 2, 3]
+        });
+        Interaction.trigger("intWindowResize", {
+            data: Date.now()
+        });
+        Interaction.trigger("intBodyScroll"); // no options
+        // trigger examples (with delegation)
+        var $cont = document.getElementById("cont");
+        Interaction.trigger("intMainBodyClick", {
+            targets: {
+                target: $cont
+            },
+            data: {
+                "key": "value"
+            }
+        });
+        var $first_input = window.app.libs.Funnel(document.body)
+            .all()
+            .tags("input")
+            .getElement();
+        Interaction.trigger("intInputMouseenter", {
+            targets: {
+                target: $first_input
+            }
+        });
     }
-    // trigger examples (no delegation)
-    window.app.libs.Interaction.trigger("intCustomEvent", {
-        data: [1, 2, 3]
-    });
-    window.app.libs.Interaction.trigger("intWindowResize", {
-        data: Date.now()
-    });
-    window.app.libs.Interaction.trigger("intBodyScroll"); // no options
-    // trigger examples (with delegation)
-    var $cont = document.getElementById("cont");
-    window.app.libs.Interaction.trigger("intMainBodyClick", {
-        targets: {
-            target: $cont
-        },
-        data: {
-            "key": "value"
-        }
-    });
-    var $first_input = window.app.libs.Funnel(document.body)
-        .all()
-        .tags("input")
-        .getElement();
-    window.app.libs.Interaction.trigger("intInputMouseenter", {
-        targets: {
-            target: $first_input
-        }
-    });
 };
