@@ -32,7 +32,7 @@ Small library for event handling.
 ### Add To Project
 
 ```html
-<script src="my_js_directory_path/interaction.js"></script>
+<script src="path/to/lib.js"></script>
 ```
 
 <a name="access-library"></a>
@@ -132,7 +132,7 @@ var options = {
         // "originalTarget": <ElementNode>
     },
     // event options
-    "options": { "bubbles": true, "cancelable": false, "scoped": false, "composed" },
+    "options": { "bubbles": true, "cancelable": false, "scoped": false },
     // if the event is a custom event data can be provided,
     // whatever can be passed as data
     "data": { "key": "value" }

@@ -1,0 +1,361 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>events (interactionjs)</title>
+    <link type="text/css" rel="stylesheet" href="assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="assets/css/hljs-github.min.css" />
+</head>
+
+<body>
+    <article class="markdown-body"><h1 id="events-(interactionjs)">events (interactionjs)</h1>
+<p>Small library for event handling.</p>
+<h5 id="table-of-contents">Table of Contents</h5>
+<p><a href="#what-it-does">What It Does</a><br><a href="#add-to-project">Add To Project</a><br><a href="#access-library">Access Library</a><br><a href="#instance-creation">Instance Creation</a><br><a href="#api">API</a>  </p>
+<ul class="list">
+<li><a href="#global-api">Global</a><ul class="list">
+<li><a href="#global-quicktable-reference">QuickTable</a>  </li>
+<li><a href="#global-methods-long">Methods</a>  </li>
+</ul>
+</li>
+<li><a href="#instance-api">Instance</a><ul class="list">
+<li><a href="#instance-quicktable-reference">QuickTable</a>  </li>
+<li><a href="#instance-methods-long">Methods</a> </li>
+</ul>
+</li>
+</ul>
+<p><a href="#usage">Usage</a>  </p>
+<ul class="list">
+<li><a href="#delegation-targets">Delegation (targets)</a>  <ul class="list">
+<li><a href="#targets-object">Targets Object</a></li>
+</ul>
+</li>
+</ul>
+<p><a href="#contributing">Contributing</a><br><a href="#license">License</a>  </p>
+<p><a name="what-it-does"></a></p>
+<h3 id="what-it-does">What It Does</h3>
+<ul class="list">
+<li>Create, Remove, Manage (list / disable / enable / trigger) events</li>
+</ul>
+<p><a name="add-to-project"></a></p>
+<h3 id="add-to-project">Add To Project</h3>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/lib.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre><p><a name="access-library"></a></p>
+<h3 id="access-library">Access Library</h3>
+<pre class="hljs"><code><span class="hljs-keyword">var</span> Interaction = <span class="hljs-built_in">window</span>.app.libs.Interaction;</code></pre><p><a name="instance-creation"></a></p>
+<h3 id="instance-creation">Instance Creation</h3>
+<pre class="hljs"><code><span class="hljs-keyword">var</span> interaction = <span class="hljs-keyword">new</span> Interaction(p1, p2);
+<span class="hljs-comment">// p1: Optional Interaction Name</span>
+<span class="hljs-comment">// p2: ID of Interaction To Clone Options Of</span>
+
+<span class="hljs-comment">// Using the "new" keyword is not necessary. If not used</span>
+<span class="hljs-comment">// the library will make sure to use it for you.</span>
+<span class="hljs-keyword">var</span> interaction = Interaction();
+
+<span class="hljs-comment">// **Note: Interaction name can also be provided upon instance creation.</span>
+<span class="hljs-comment">// This is not necessary. This only serves as feedback to identify what </span>
+<span class="hljs-comment">// the interaction is for.</span>
+<span class="hljs-keyword">var</span> interaction = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Main Body Click."</span>);
+
+<span class="hljs-comment">// Will clone the options off the interaction with the ID of "custom".</span>
+<span class="hljs-comment">// In the case some options need to be reset/replaced/updated use the </span>
+<span class="hljs-comment">// reset method.</span>
+<span class="hljs-keyword">var</span> interaction = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Main Body Click."</span>, <span class="hljs-string">"custom"</span>)
+    .reset(<span class="hljs-string">"id"</span>) <span class="hljs-comment">// reset the id</span>
+    .id(<span class="hljs-string">"test456"</span>) <span class="hljs-comment">// add new ID</span>
+    .enable();</code></pre><p><a name="api"></a></p>
+<h3 id="api">API</h3>
+<p><a name="global-api"></a></p>
+<h3 id="api-&mdash;-global">API &mdash; Global</h3>
+<p><a name="global-quicktable-reference"></a></p>
+<h3 id="global-quicktable-reference">Global QuickTable Reference</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>interactions</strong></td>
+<td>Returns an array of all the created interactions</td>
+</tr>
+<tr>
+<td><strong>interactionsFor</strong></td>
+<td>Returns all interactions where the provided element was used as an anchor</td>
+</tr>
+<tr>
+<td><strong>trigger</strong></td>
+<td>Triggers an interaction</td>
+</tr>
+<tr>
+<td><strong>disableAll</strong></td>
+<td>Disables all interactions</td>
+</tr>
+<tr>
+<td><strong>enableAll</strong></td>
+<td>Enables all interactions</td>
+</tr>
+<tr>
+<td><strong>remove</strong></td>
+<td>Removes interaction with matching provided ID</td>
+</tr>
+<tr>
+<td><strong>removeAll</strong></td>
+<td>Removes all interactions</td>
+</tr>
+<tr>
+<td><strong>handlers</strong></td>
+<td>Returns an object containing all the handlers</td>
+</tr>
+<tr>
+<td><strong>filters</strong></td>
+<td>Returns an object containing all the filters</td>
+</tr>
+<tr>
+<td><strong>addFilter</strong></td>
+<td>Adds a filter to the internal filters registry</td>
+</tr>
+<tr>
+<td><strong>removeFilter</strong></td>
+<td>Removes a filter from the internal filters registry</td>
+</tr>
+<tr>
+<td><strong>addHandler</strong></td>
+<td>Adds a handler to the internal handlers registry</td>
+</tr>
+<tr>
+<td><strong>removeHandler</strong></td>
+<td>Removes a handler from the internal handlers registry</td>
+</tr>
+</tbody>
+</table>
+<p><a name="global-methods-long"></a></p>
+<h3 id="global-methods">Global Methods</h3>
+<p><strong>Interaction.interactions</strong> &mdash; Returns an array of all the created interactions.</p>
+<pre class="hljs"><code>Interaction.interactions();</code></pre><p><strong>Interaction.interactionsFor</strong> &mdash; Returns all interactions where the provided element was used as an anchor.</p>
+<pre class="hljs"><code>Interaction.interactionsFor(<span class="hljs-built_in">document</span>);
+Interaction.interactionsFor(<span class="hljs-built_in">window</span>);
+Interaction.interactionsFor(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"container"</span>));</code></pre><p><strong>Interaction.trigger</strong> &mdash; Triggers an interaction.</p>
+<pre class="hljs"><code><span class="hljs-comment">// signature</span>
+Interaction.trigger(<span class="hljs-string">"interaction_id"</span>, options);
+
+<span class="hljs-comment">// possible options (optional)</span>
+<span class="hljs-keyword">var</span> options = {
+    <span class="hljs-comment">// if using event delegation, provide the correct target elements so </span>
+    <span class="hljs-comment">// that the events function as if they were naturally triggered.</span>
+    <span class="hljs-comment">// these target elements will be passed to interactions filter functions.</span>
+    <span class="hljs-string">"targets"</span>: {
+        <span class="hljs-string">"target"</span>: <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"cont"</span>),
+        <span class="hljs-comment">// "currentTarget": &lt;ElementNode&gt;,</span>
+        <span class="hljs-comment">// "relatedTarget": &lt;ElementNode&gt;,</span>
+        <span class="hljs-comment">// "srcElement": &lt;ElementNode&gt;,</span>
+        <span class="hljs-comment">// "fromElement": &lt;ElementNode&gt;,</span>
+        <span class="hljs-comment">// "toElement": &lt;ElementNode&gt;,</span>
+        <span class="hljs-comment">// "explicitOriginalTarget": &lt;ElementNode&gt;,</span>
+        <span class="hljs-comment">// "originalTarget": &lt;ElementNode&gt;</span>
+    },
+    <span class="hljs-comment">// event options</span>
+    <span class="hljs-string">"options"</span>: { <span class="hljs-string">"bubbles"</span>: <span class="hljs-literal">true</span>, <span class="hljs-string">"cancelable"</span>: <span class="hljs-literal">false</span>, <span class="hljs-string">"scoped"</span>: <span class="hljs-literal">false</span> },
+    <span class="hljs-comment">// if the event is a custom event data can be provided,</span>
+    <span class="hljs-comment">// whatever can be passed as data</span>
+    <span class="hljs-string">"data"</span>: { <span class="hljs-string">"key"</span>: <span class="hljs-string">"value"</span> }
+};
+
+<span class="hljs-comment">// trigger examples (no delegation)</span>
+Interaction.trigger(<span class="hljs-string">"custom"</span>, { <span class="hljs-attr">data</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>] });
+Interaction.trigger(<span class="hljs-string">"test123"</span>, { <span class="hljs-attr">data</span>: <span class="hljs-built_in">Date</span>.now() });
+Interaction.trigger(<span class="hljs-string">"scroll"</span>); <span class="hljs-comment">// no options</span>
+
+<span class="hljs-comment">// trigger examples (with delegation)</span>
+<span class="hljs-keyword">var</span> $cont = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"cont"</span>);
+Interaction.trigger(<span class="hljs-string">"bodyClick"</span>, {
+    <span class="hljs-attr">targets</span>: {
+        <span class="hljs-attr">target</span>: $cont
+    },
+    <span class="hljs-attr">data</span>: { <span class="hljs-string">"key"</span>: <span class="hljs-string">"value"</span> }
+});
+<span class="hljs-keyword">var</span> $first_input = Funnel(<span class="hljs-built_in">document</span>.body).all().tags(<span class="hljs-string">"input"</span>).getElement();
+Interaction.trigger(<span class="hljs-string">"mouseenter"</span>, {
+    <span class="hljs-attr">targets</span>: {
+        <span class="hljs-attr">target</span>: $first_input
+    }
+});</code></pre><p><strong>Interaction.disableAll</strong> &mdash; Disables all interactions.</p>
+<pre class="hljs"><code>Interaction.disableAll();</code></pre><p><strong>Interaction.enableAll</strong> &mdash; Enables all interactions.</p>
+<pre class="hljs"><code>Interaction.enableAll();</code></pre><p><strong>Interaction.remove</strong> &mdash; Removes interaction with matching provided ID.</p>
+<pre class="hljs"><code>Interaction.remove(<span class="hljs-string">"interaction_id"</span>);</code></pre><p><strong>Interaction.removeAll</strong> &mdash; Removes all interactions.</p>
+<pre class="hljs"><code>Interaction.removeAll();</code></pre><p><strong>Interaction.handlers</strong> &mdash; Returns an object containing all the handlers.</p>
+<pre class="hljs"><code>Interaction.handlers();</code></pre><p><strong>Interaction.filters</strong> &mdash; Returns an object containing all the filters.</p>
+<pre class="hljs"><code>Interaction.filters();</code></pre><p><strong>Interaction.addFilter</strong> &mdash; Adds a filter to the internal filters registry.</p>
+<pre class="hljs"><code>Interaction.addFilter(<span class="hljs-string">"filer_name"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{ <span class="hljs-comment">/*logic*/</span> });</code></pre><p><strong>Interaction.removeFilter</strong> &mdash; Removes a filter from the internal filters registry.</p>
+<pre class="hljs"><code>Interaction.removeFilter(<span class="hljs-string">"filer_name"</span>);</code></pre><p><strong>Interaction.addHandler</strong> &mdash; Adds a handler to the internal handlers registry.</p>
+<pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"filer_name"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{ <span class="hljs-comment">/*logic*/</span> });</code></pre><p><strong>Interaction.removeHandler</strong> &mdash; Removes a handler from the internal handlers registry.</p>
+<pre class="hljs"><code>Interaction.removeHandler(<span class="hljs-string">"filer_name"</span>);</code></pre><p><a name="instance-api"></a></p>
+<h3 id="api-&mdash;-instance">API &mdash; Instance</h3>
+<p><a name="instance-quicktable-reference"></a></p>
+<h3 id="instance-quicktable-reference">Instance QuickTable Reference</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>id</strong></td>
+<td>Set the interaction ID</td>
+</tr>
+<tr>
+<td><strong>on</strong></td>
+<td>The events to listen for</td>
+</tr>
+<tr>
+<td><strong>namespace</strong></td>
+<td>The namespace the events should be under</td>
+</tr>
+<tr>
+<td><strong>anchors</strong></td>
+<td>The elements to attach the events to</td>
+</tr>
+<tr>
+<td><strong>filters</strong></td>
+<td>If using event delegation, filters can be used to filter out the wanted element(s)</td>
+</tr>
+<tr>
+<td><strong>fireCount</strong></td>
+<td>The amount of times the handler should fire</td>
+</tr>
+<tr>
+<td><strong>capture</strong></td>
+<td>Should the event capture</td>
+</tr>
+<tr>
+<td><strong>passive</strong></td>
+<td>Should the event be passive</td>
+</tr>
+<tr>
+<td><strong>debounce</strong></td>
+<td>Should the event be debounced</td>
+</tr>
+<tr>
+<td><strong>throttle</strong></td>
+<td>Should the event be throttled</td>
+</tr>
+<tr>
+<td><strong>handler</strong></td>
+<td>The event handler</td>
+</tr>
+<tr>
+<td><strong>enable</strong></td>
+<td>Enables the event</td>
+</tr>
+<tr>
+<td><strong>disable</strong></td>
+<td>Disables the event</td>
+</tr>
+<tr>
+<td><strong>remove</strong></td>
+<td>Removes the event</td>
+</tr>
+</tbody>
+</table>
+<p><a name="instance-methods-long"></a></p>
+<h3 id="instance-methods">Instance Methods</h3>
+<p><strong>interaction.id</strong> &mdash; Set the interaction ID.</p>
+<pre class="hljs"><code><span class="hljs-comment">// **Note: The provided ID must be unique.</span>
+<span class="hljs-comment">// The ID is optional and only needed if wanted to access the instance</span>
+<span class="hljs-comment">// sometime later to remove, enable/disable, trigger, etc. the interaction.</span>
+interaction.id(<span class="hljs-string">"some_unique_id"</span>);</code></pre><p><strong>interaction.on</strong> &mdash; The events to listen for.</p>
+<pre class="hljs"><code><span class="hljs-comment">// N amount of events can be passed in.</span>
+interaction.on(<span class="hljs-string">"click"</span>, <span class="hljs-string">"wheel"</span>);</code></pre><p><strong>interaction.namespace</strong> &mdash; The namespace the events should be under.</p>
+<pre class="hljs"><code><span class="hljs-comment">// Providing a namespace is optional.</span>
+interaction.namespace(<span class="hljs-string">"namespace1.namespace2.namespaceN"</span>);</code></pre><p><strong>interaction.anchors</strong> &mdash; The elements to attach the events to.</p>
+<pre class="hljs"><code><span class="hljs-comment">// N amount of elements can be passed in.</span>
+<span class="hljs-keyword">var</span> $cont = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"cont"</span>);
+interaction.anchors(<span class="hljs-built_in">document</span>, <span class="hljs-built_in">window</span>, $cont);</code></pre><p><strong>interaction.filters</strong> &mdash; If using event delegation, filters can be used to filter out the wanted element(s).</p>
+<pre class="hljs"><code><span class="hljs-comment">// N amount of filters can be passed in.</span>
+interaction.filters(<span class="hljs-string">"filter1"</span>, <span class="hljs-string">"filter2"</span>);</code></pre><p><strong>interaction.fireCount</strong> &mdash; The amount of times the handler should fire.
+If not provided the count is set to <code>Infinity</code>.</p>
+<pre class="hljs"><code>interaction.fireCount(<span class="hljs-number">1</span>); <span class="hljs-comment">// fire once</span>
+<span class="hljs-comment">// **Note: Once the count reaches zero the event gets automatically removed.</span></code></pre><p><strong>interaction.capture</strong> &mdash; Should the event capture?</p>
+<pre class="hljs"><code>interaction.capture(<span class="hljs-literal">true</span>);</code></pre><p><strong>interaction.capture</strong> &mdash; Should the event be passive?</p>
+<pre class="hljs"><code>interaction.passive(<span class="hljs-literal">true</span>);</code></pre><p><strong>interaction.debounce</strong> &mdash; Should the event be debounced?</p>
+<pre class="hljs"><code><span class="hljs-comment">// **Note: The event can be throttled or debounced but not both.</span>
+interaction.debounced(<span class="hljs-number">250</span>);</code></pre><p><strong>interaction.throttle</strong> &mdash; Should the event be throttled?</p>
+<pre class="hljs"><code><span class="hljs-comment">// **Note: The event can be throttled or debounced but not both.</span>
+interaction.throttled(<span class="hljs-number">250</span>);</code></pre><p><strong>interaction.handler</strong> &mdash; The event handler.</p>
+<pre class="hljs"><code>interaction.handler(<span class="hljs-string">"handler1"</span>);</code></pre><p><strong>interaction.enable</strong> &mdash; Enables the event.</p>
+<pre class="hljs"><code>interaction.enable();</code></pre><p><strong>interaction.disable</strong> &mdash; Disables the event.</p>
+<pre class="hljs"><code>interaction.disable(); <span class="hljs-comment">// mutes event</span></code></pre><p><strong>interaction.remove</strong> &mdash; Removes the event.</p>
+<pre class="hljs"><code><span class="hljs-comment">// **Note: This will unbind all events from anchors and remove the </span>
+<span class="hljs-comment">// interaction from the internal registry. In essence, the interaction</span>
+<span class="hljs-comment">// is no longer tracked/accounted for.</span>
+interaction.remove();</code></pre><p><a name="usage"></a></p>
+<h3 id="usage">Usage</h3>
+<p>For a better understanding check out <code>index.html</code> and <code>app.js</code>. <code>app.js</code> contains examples showing how the library is used.</p>
+<p><strong>Note:</strong> The filters in these examples use <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a>. <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering can be done using VanillaJS. The library is just very useful for things like event delegation.</p>
+<p><a name="delegation-targets"></a></p>
+<h3 id="delegation-(targets)">Delegation (targets)</h3>
+<p>The library provides a normalized object with the event target elements. This object can be accessed as the second parameter like so...</p>
+<pre class="hljs"><code>Interaction.addFilter(<span class="hljs-string">"filer_name"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{ <span class="hljs-comment">/*logic*/</span> });
+Interaction.addHandler(<span class="hljs-string">"filer_name"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{ <span class="hljs-comment">/*logic*/</span> });</code></pre><p>Additionally, when event delegation is used the name of the filter function that passed, if any, is returned. This is useful when multiple filter functions are used for a single interaction.</p>
+<p><a name="targets-object"></a></p>
+<h3 id="targets-object">Targets Object</h3>
+<table>
+<thead>
+<tr>
+<th>Target (Element)</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/target">target</a></strong></td>
+<td>The element that trigger/dispatched the event</td>
+<td><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/target">Target Information</a></td>
+</tr>
+<tr>
+<td><strong><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget">currentTarget</a></strong></td>
+<td>Always refers to the element that the event handler was attached to</td>
+</tr>
+<tr>
+<td><strong><a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/relatedTarget">relatedTarget</a></strong></td>
+<td>A mouseevent property that refers to the secondary element involved in the event</td>
+</tr>
+<tr>
+<td><strong><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/srcElement">srcElement</a></strong></td>
+<td>Avoid using this event target and use <code>e.target</code> as this is just an alias for <code>e.target</code></td>
+</tr>
+<tr>
+<td><strong><a href="http://help.dottoro.com/ljjqfjbs.php">fromElement</a></strong></td>
+<td>Equivalent to FireFox&#39;s relatedTarget</td>
+</tr>
+<tr>
+<td><strong><a href="http://help.dottoro.com/ljltrsom.php">toElement</a></strong></td>
+<td>Equivalent to FireFox&#39;s relatedTarget</td>
+</tr>
+<tr>
+<td><strong><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/explicitOriginalTarget">explicitOriginalTarget</a></strong></td>
+<td>FireFox specific and should not be used as they are non-standard</td>
+</tr>
+<tr>
+<td><strong><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/originalTarget">originalTarget</a></strong></td>
+<td>FireFox specific and should not be used as they are non-standard</td>
+</tr>
+</tbody>
+</table>
+<p><a name="contributing"></a></p>
+<h3 id="contributing">Contributing</h3>
+<p>Contributions are welcome! Found a bug, feel like documentation is lacking/confusing and needs an update, have performance/feature suggestions or simply found a typo? Let me know! :)</p>
+<p>See how to contribute <a href="https://github.com/cgabriel5/interactionjs/blob/master/CONTRIBUTING.md">here</a>.</p>
+<p><a name="license"></a></p>
+<h3 id="license">License</h3>
+<p>This project uses the <a href="https://github.com/cgabriel5/interactionjs/blob/master/LICENSE.txt">MIT License</a>.</p>
+    </article>
+</body>
+
+</html>
