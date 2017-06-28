@@ -1,0 +1,14 @@
+https://developer.mozilla.org/en-US/docs/Web/Events
+https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
+https://msdn.microsoft.com/en-us/library/dn905219(v=vs.85).aspx
+https://developer.mozilla.org/en-US/docs/Web/API/Event/Event
+https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events
+https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent#Notes
+https://developer.mozilla.org/en-US/docs/Web/API/Event
+https://developer.mozilla.org/en-US/docs/Web/API/Event/Event
+https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent
+https://davidwalsh.name/customevent
+https://developer.mozilla.org/en-US/docs/Web/Events/mouseenter
+Node.isSameNode() -> {https://developer.mozilla.org/en-US/docs/Web/API/Node/isSameNode}
+Node.isEqualNode() -> {https://developer.mozilla.org/en-US/docs/Web/API/Node/isEqualNode}
+Node.contains() -> {https://developer.mozilla.org/en-US/docs/Web/API/Node/contains}
