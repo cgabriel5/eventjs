@@ -24,7 +24,22 @@
 </ul>
 </li>
 <li><a href="#usage">Usage</a><ul class="list">
-<li><a href="#example-triggering">Step By Step</a></li>
+<li><a href="#example-overview">Overview</a><ul class="list">
+<li><a href="#example-click-event">Click Event</a></li>
+<li><a href="#example-resize-event">Resize Event</a></li>
+<li><a href="#example-scroll-event">Scroll Event</a></li>
+<li><a href="#example-cloning-event">Cloning Event</a></li>
+<li><a href="#example-custom-event">Custom Event</a></li>
+<li><a href="#example-event-delegation">Event Delegation</a><ul class="list">
+<li><a href="#example-mouseenter-event">Mouseenter Event</a></li>
+<li><a href="#example-mouseleave-event">Mouseleave Event</a></li>
+<li><a href="#example-mouseover-event">Mouseover Event</a></li>
+<li><a href="#example-click-delegation-1">Click Delegation Example 1</a></li>
+<li><a href="#example-click-delegation-2">Click Delegation Example 2</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a href="#example-triggering">Triggering</a></li>
 </ul>
 </li>
@@ -367,13 +382,159 @@ If not provided the count is set to <code>Infinity</code>.</p>
     .enable();</code></pre><p><a name="usage"></a></p>
 <h3 id="usage">Usage</h3>
 <p>For a better understanding check out <code>index.html</code> and <code>js/source/test.js</code>. <code>js/source/test.js</code> contains examples showing how the library is used.</p>
-<p><strong>Note:</strong> <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is used in the filters for the <code>js/source/test.js</code> examples as well as in the examples below. <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering can be done using VanillaJS. The library is just very useful for things like event delegation.</p>
-<p><strong>Step 1</strong> &mdash; Get needed libraries.</p>
-<pre class="hljs"><code><span class="hljs-comment">// get the libs</span>
-<span class="hljs-keyword">var</span> libs = app.libs,
-    Interaction = libs.Interaction,
-    Funnel = libs.Funnel;</code></pre><p><strong>Step 2</strong> &mdash; Add delegation filters (only when event delegation is needed).</p>
-<p><strong>Note</strong>: Filter functions are used when using event delegation. They can be thought of as middleware functions because they only serve to filter the wanted target element. When a target element passes the filter only then will the interaction&#39;s handler be invoked. The passing target can then be accessed from within the handler via the targets object (second parameter). </p>
+<p><strong>Note:</strong> <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is used in the filters for the <code>js/source/test.js</code> examples as well as in the examples below. <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering can be done using VanillaJS. The library is just very useful for filtering elements.</p>
+<p><strong>Note</strong>: The following are just examples and is not an exhaustive list of the supported events. The library is just a wrapper for the <code>addEventListener</code>. Therefore, all native JavaScript events may be used.</p>
+<p><strong>Overview</strong> &mdash; Usage overview.</p>
+<ul class="list">
+<li>Using interactions work in one of two patterns:<ul class="list">
+<li>No event delegation:<ul class="list">
+<li><strong>Step 1</strong> &mdash; Add handler.</li>
+<li><strong>Step 2</strong> &mdash; Create interaction.</li>
+</ul>
+</li>
+<li>Event delegation:<ul class="list">
+<li><strong>Step 1</strong> &mdash; Add delegation filter.</li>
+<li><strong>Step 2</strong> &mdash; Add handler.</li>
+<li><strong>Step 3</strong> &mdash; Create interaction.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><a name="example-click-event"></a>
+<strong>Click Event</strong> &mdash; A simple click event example.</p>
+<pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"container_click"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Container Clicked!"</span>, filter_name);
+    <span class="hljs-comment">// logic...</span>
+});</code></pre><pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Container click!"</span>) 
+    .on(<span class="hljs-string">"click"</span>)
+    .anchors(Funnel(<span class="hljs-string">"#cont"</span>).getElement()) 
+    .handler(<span class="hljs-string">"container_click"</span>)
+    .fireCount(<span class="hljs-number">4</span>)
+    .enable();</code></pre><p><a name="example-resize-event"></a>
+<strong>Resize Event</strong> &mdash; Monitor the window for any resizing.</p>
+<pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"window_resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Resized!"</span>, filter_name);
+    <span class="hljs-comment">// logic...</span>
+});</code></pre><pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Window Resize!"</span>)
+    .id(<span class="hljs-string">"intWindowResize"</span>)
+    .on(<span class="hljs-string">"resize"</span>)
+    .anchors(<span class="hljs-built_in">window</span>)
+    .handler(<span class="hljs-string">"window_resize"</span>)
+    <span class="hljs-comment">// .throttle(300) // &lt;-- *debounce or throttle heavy interactions*</span>
+    <span class="hljs-comment">// .debounce(300) // &lt;-- *debounce or throttle heavy interactions*</span>
+    .fireCount(<span class="hljs-number">20</span>)
+    .enable();</code></pre><ul class="list">
+<li><strong>Note</strong>: Heavy events like the resize event should be throttled or debounced when used as they can hamper and bog down the user&#39;s browser. </li>
+</ul>
+<p><a name="example-scroll-event"></a>
+<strong>Scroll Event</strong> &mdash; Simple scroll event example.</p>
+<pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"body_mouswheel"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Body scroll!"</span>, filter_name);
+    <span class="hljs-comment">// logic...</span>
+});</code></pre><pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Body Scroll"</span>)
+    .id(<span class="hljs-string">"intBodyScroll"</span>)
+    .on(<span class="hljs-string">"mousewheel"</span>)
+    .anchors(<span class="hljs-built_in">document</span>)
+    .handler(<span class="hljs-string">"body_mouswheel"</span>)
+    .fireCount(<span class="hljs-number">10</span>)
+    .enable();</code></pre><ul class="list">
+<li><strong>Note</strong>: The <code>mousewheel</code> can be used for all browsers. Internally the correct <code>mousewheel</code> or <code>DOMMouseScroll</code> event will be applied.</li>
+</ul>
+<p><a name="example-cloning-event"></a>
+<strong>Cloning Event</strong> &mdash; Interactions can also be cloned.</p>
+<ul class="list">
+<li><strong>Note</strong>: A cloned interaction will use the source interaction&#39;s handler unless reset and updated to a new handler.</li>
+</ul>
+<pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"My Cloned Interaction"</span>, <span class="hljs-string">"intWindowResize"</span>)
+    <span class="hljs-comment">// change any options here...</span>
+    .reset(<span class="hljs-string">"id"</span>)
+    .id(<span class="hljs-string">"intWindowResizeClone"</span>)
+    .enable();</code></pre><p><a name="example-custom-event"></a>
+<strong>Custom Event</strong> &mdash; Custom events can also be created.</p>
+<pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"custom_event"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Custom Event!"</span>, filter_name);
+    <span class="hljs-comment">// logic...</span>
+});</code></pre><pre class="hljs"><code><span class="hljs-comment">// Custom Event Example</span>
+<span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Custom Event"</span>)
+    .id(<span class="hljs-string">"intCustomEvent"</span>)
+    .on(<span class="hljs-string">":build"</span>)
+    .anchors(<span class="hljs-built_in">document</span>)
+    .handler(<span class="hljs-string">"custom_event"</span>)
+    .enable();</code></pre><ul class="list">
+<li><strong>Note</strong>: Custom events should be prefixed with a colon.</li>
+</ul>
+<p><a name="example-event-delegation"></a>
+<strong>Event Delegation</strong> &mdash; Some examples using the library for event delegation.</p>
+<ul class="list">
+<li><strong>Note</strong>: Event delegation requires the use of filter functions. Filter functions can be thought of as middleware functions because they only serve to filter the wanted target element. Only when a target element passes the filter will the interaction&#39;s handler be invoked. The passing target can then be accessed from within the handler via the targets object (second parameter). </li>
+</ul>
+<p><a name="example-mouseenter-event"></a>
+<strong>Mouseenter Event</strong> &mdash; Library provided mouseenter event.</p>
+<pre class="hljs"><code><span class="hljs-comment">// Using FunnelJS, filter and return an element that has the class "cont".</span>
+Interaction.addFilter(<span class="hljs-string">"container_mouseover"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{
+    <span class="hljs-comment">// filter logic</span>
+    <span class="hljs-keyword">var</span> parents = Funnel(targets.target)
+        .parents()
+        .getStack();
+    <span class="hljs-keyword">return</span> Funnel(targets.target)
+        .concat(parents)
+        .classes(<span class="hljs-string">"cont"</span>)
+        .getElement();
+});</code></pre><pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"container_mouseover"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Mouseover!"</span>, filter_name);
+    <span class="hljs-comment">// logic...</span>
+});</code></pre><pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Container Mouseenter"</span>)
+    .on(<span class="hljs-string">"mouseover"</span>)
+    .anchors(<span class="hljs-built_in">document</span>)
+    .filters(<span class="hljs-string">"container_mouseover@mouseenter"</span>)
+    .handler(<span class="hljs-string">"container_mouseover"</span>)
+    .enable();</code></pre><ul class="list">
+<li><strong>Note</strong>: When <em>any</em> filter passes the handler gets invoked. The <code>@mouseenter</code> tells the library to treat the mouseover event as a mouseenter event.</li>
+</ul>
+<p><a name="example-mouseleave-event"></a>
+<strong>Mouseleave Event</strong> &mdash; Library provided mouseleave event.</p>
+<pre class="hljs"><code><span class="hljs-comment">// Using FunnelJS, filter and return an element that has the class "cont".</span>
+Interaction.addFilter(<span class="hljs-string">"container_mouseleave"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{
+    <span class="hljs-comment">// filter logic</span>
+    <span class="hljs-keyword">var</span> parents = Funnel(targets.target)
+        .parents()
+        .getStack();
+    <span class="hljs-keyword">return</span> Funnel(targets.target)
+        .concat(parents)
+        .classes(<span class="hljs-string">"cont"</span>)
+        .getElement();
+});</code></pre><pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"container_mouseleave"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Mouseout!"</span>, filter_name);
+    <span class="hljs-comment">// logic...</span>
+});</code></pre><pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Container Mouseleave"</span>)
+    .on(<span class="hljs-string">"mouseout"</span>)
+    .anchors(<span class="hljs-built_in">document</span>)
+    .filters(<span class="hljs-string">"container_mouseleave@mouseleave"</span>)
+    .handler(<span class="hljs-string">"container_mouseleave"</span>)
+    .enable();</code></pre><ul class="list">
+<li><strong>Note</strong>: When <em>any</em> filter passes the handler gets invoked. The <code>@mouseleave</code> tells the library to treat the mouseover event as a mouseleave.</li>
+</ul>
+<p><a name="example-mouseover-event"></a>
+<strong>Mouseover Event Delegation</strong> &mdash; Mouseover event with event delegation.</p>
+<pre class="hljs"><code><span class="hljs-comment">// Using FunnelJS, filter and return an element which is of tag type "input.</span>
+Interaction.addFilter(<span class="hljs-string">"input_mouseover"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{
+    <span class="hljs-comment">// filter logic</span>
+    <span class="hljs-keyword">return</span> Funnel(targets.target)
+        .tags(<span class="hljs-string">"input"</span>)
+        .getElement();
+});</code></pre><pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"input_mouseover"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Mouseover Input!"</span>, filter_name);
+    <span class="hljs-comment">// logic...</span>
+});</code></pre><pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Input Mouseenter"</span>)
+    .id(<span class="hljs-string">"intInputMouseenter"</span>)
+    .on(<span class="hljs-string">"mouseover"</span>)
+    .namespace(<span class="hljs-string">"input"</span>)
+    .anchors(<span class="hljs-built_in">document</span>)
+    .filters(<span class="hljs-string">"input_mouseover"</span>)
+    .handler(<span class="hljs-string">"input_mouseover"</span>)
+    .enable();</code></pre><p><a name="example-click-delegation-1"></a>
+<strong>Click Delegation Example 1</strong> &mdash; Click event with event delegation.</p>
 <pre class="hljs"><code><span class="hljs-comment">// Using FunnelJS, filter and return an element that has the class "cont".</span>
 Interaction.addFilter(<span class="hljs-string">"container_click"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{
     <span class="hljs-comment">// filter logic</span>
@@ -391,270 +552,60 @@ Interaction.addFilter(<span class="hljs-string">"input_click"</span>, <span clas
     <span class="hljs-keyword">return</span> Funnel(targets.target)
         .attrs(<span class="hljs-string">"[id=input]"</span>)
         .getElement();
-});
-<span class="hljs-comment">// Using FunnelJS, filter and return an element that has the class "cont".</span>
-Interaction.addFilter(<span class="hljs-string">"container_mouseover"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{
-    <span class="hljs-comment">// filter logic</span>
-    <span class="hljs-keyword">var</span> parents = Funnel(targets.target)
-        .parents()
-        .getStack();
-    <span class="hljs-keyword">return</span> Funnel(targets.target)
-        .concat(parents)
-        .classes(<span class="hljs-string">"cont"</span>)
-        .getElement();
-});
-<span class="hljs-comment">// Using FunnelJS, filter and return an element that has the class "cont".</span>
-Interaction.addFilter(<span class="hljs-string">"container_mouseleave"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{
-    <span class="hljs-comment">// filter logic</span>
-    <span class="hljs-keyword">var</span> parents = Funnel(targets.target)
-        .parents()
-        .getStack();
-    <span class="hljs-keyword">return</span> Funnel(targets.target)
-        .concat(parents)
-        .classes(<span class="hljs-string">"cont"</span>)
-        .getElement();
-});
-<span class="hljs-comment">// Using FunnelJS, filter and return an element which is of tag type "input.</span>
-Interaction.addFilter(<span class="hljs-string">"input_mouseover"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{
-    <span class="hljs-comment">// filter logic</span>
-    <span class="hljs-keyword">return</span> Funnel(targets.target)
-        .tags(<span class="hljs-string">"input"</span>)
-        .getElement();
-});</code></pre><p><strong>Step 3</strong> &mdash; Add handlers. Actual logic should be handled inside the handler.</p>
-<pre class="hljs"><code><span class="hljs-comment">// register event handlers</span>
-Interaction.addHandler(<span class="hljs-string">"container_click"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+});</code></pre><pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"container_click"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Container Clicked!"</span>, filter_name);
     <span class="hljs-comment">// logic...</span>
-});
-Interaction.addHandler(<span class="hljs-string">"window_resize"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Resized!"</span>, filter_name);
-    <span class="hljs-comment">// logic...</span>
-});
-Interaction.addHandler(<span class="hljs-string">"container_click"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Clicked!"</span>, filter_name);
-    <span class="hljs-comment">// logic...</span>
-});
-Interaction.addHandler(<span class="hljs-string">"second_body_click"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Second Clicked!"</span>, filter_name);
-    <span class="hljs-comment">// logic...</span>
-});
-Interaction.addHandler(<span class="hljs-string">"body_mouswheel"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Body scroll!"</span>, filter_name);
-    <span class="hljs-comment">// logic...</span>
-});
-Interaction.addHandler(<span class="hljs-string">"container_mouseover"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Mouseover!"</span>, filter_name);
-    <span class="hljs-comment">// logic...</span>
-});
-Interaction.addHandler(<span class="hljs-string">"container_mouseleave"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Mouseout!"</span>, filter_name);
-    <span class="hljs-comment">// logic...</span>
-});
-Interaction.addHandler(<span class="hljs-string">"input_mouseover"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Mouseover Input!"</span>, filter_name);
-    <span class="hljs-comment">// logic...</span>
-});
-Interaction.addHandler(<span class="hljs-string">"custom_event"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Custom Event!"</span>, filter_name);
-    <span class="hljs-comment">// logic...</span>
-});</code></pre><p><strong>Step 1</strong> &mdash; Create interactions.</p>
-<ul class="list">
-<li>Click event.</li>
-<li>Give interaction the name <code>Container click!</code>.</li>
-<li>Will anchored/binded to the element with an ID of <code>#cont</code>.</li>
-<li>Will fire the <code>container_click</code> handler.</li>
-<li>Will only fire the handler <code>4</code> times. <ul class="list">
-<li>Handler will be automatically removed after fire count hits zero.</li>
-</ul>
-</li>
-</ul>
-<pre class="hljs"><code><span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Container click!"</span>)
-    .on(<span class="hljs-string">"click"</span>)
-    .anchors(Funnel(<span class="hljs-string">"#cont"</span>).getElement())
-    .handler(<span class="hljs-string">"container_click"</span>)
-    .fireCount(<span class="hljs-number">4</span>)
-    .enable();</code></pre><ul class="list">
-<li>Window resize event.</li>
-<li>Give interaction the name <code>Window Resize!</code>.</li>
-<li>Interaction will get an id of <code>intWindowResize</code>.</li>
-<li>Will get bound to the <code>window</code>.</li>
-<li>Will fire the <code>window_resize</code> handler.</li>
-<li>Will only fire the handler <code>20</code> times. <ul class="list">
-<li>Handler will be automatically removed after fire count hits zero.</li>
-</ul>
-</li>
-</ul>
-<p><strong>Note</strong>: Heavy events like the resize event should be throttled or debounced when used as they can hamper and bog down the user&#39;s browser. </p>
-<pre class="hljs"><code><span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Window Resize!"</span>)
-    .id(<span class="hljs-string">"intWindowResize"</span>)
-    .on(<span class="hljs-string">"resize"</span>)
-    .anchors(<span class="hljs-built_in">window</span>)
-    .handler(<span class="hljs-string">"window_resize"</span>)
-    <span class="hljs-comment">// .throttle(3000) // &lt;-- *debounce or throttle heavy interactions*</span>
-    <span class="hljs-comment">// .debounce(300) // &lt;-- *debounce or throttle heavy interactions*</span>
-    .fireCount(<span class="hljs-number">20</span>)
-    .enable();</code></pre><ul class="list">
-<li>Cloning interaction.</li>
-<li>Give interaction the name <code>My Cloned Interaction</code>.</li>
-<li>Will clone the <code>intWindowResize</code> interaction.</li>
-<li><code>reset</code> method used to reset the id.</li>
-<li>Change the id to <code>intWindowResizeClone</code>.</li>
-</ul>
-<pre class="hljs"><code><span class="hljs-comment">// A Cloned Interaction</span>
-<span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"My Cloned Interaction"</span>, <span class="hljs-string">"intWindowResize"</span>)
-    <span class="hljs-comment">// change any options here...</span>
-    .reset(<span class="hljs-string">"id"</span>)
-    .id(<span class="hljs-string">"intWindowResizeClone"</span>)
-    .enable();</code></pre><ul class="list">
-<li>Click event.</li>
-<li>Give interaction the name <code>Main Body Click Interaction</code>.</li>
-<li>Interaction will get an id of <code>intWindowResize</code>.</li>
-<li>Will get bound to the <code>document</code>.</li>
-<li>Will use the <code>container_click</code> and <code>input_click</code> delegation filters.<ul class="list">
-<li>When any filter passes the handler gets invoked.</li>
-</ul>
-</li>
-<li>Will fire the <code>window_resize</code> handler.</li>
-</ul>
-<pre class="hljs"><code><span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Main Body Click Interaction"</span>)
+});</code></pre><pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Main Body Click Interaction"</span>)
     .id(<span class="hljs-string">"intMainBodyClick"</span>)
     .on(<span class="hljs-string">"click"</span>)
     .anchors(<span class="hljs-built_in">document</span>)
     .filters(<span class="hljs-string">"container_click"</span>, <span class="hljs-string">"input_click"</span>)
     .handler(<span class="hljs-string">"container_click"</span>)
-    .enable();</code></pre><ul class="list">
-<li>Click event.</li>
-<li>Give interaction the name <code>Second Body Click Interaction</code>.</li>
-<li>Will get bound to the <code>document</code>.</li>
-<li>Will use the <code>container_click</code> delegation filter.<ul class="list">
-<li>When any filter passes the handler gets invoked.</li>
-</ul>
-</li>
-<li>Will fire the <code>second_body_click</code> handler.</li>
-<li>Will only fire the handler <code>5</code> times. <ul class="list">
-<li>Handler will be automatically removed after fire count hits zero.</li>
-</ul>
-</li>
-</ul>
-<pre class="hljs"><code><span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Second Body Click Interaction"</span>)
+    .enable();</code></pre><p><a name="example-click-delegation-2"></a>
+<strong>Click Delegation Example 2</strong> &mdash; Click event with event delegation.</p>
+<pre class="hljs"><code><span class="hljs-comment">// Using FunnelJS, filter and return an element that has the class "cont".</span>
+Interaction.addFilter(<span class="hljs-string">"container_click"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{
+    <span class="hljs-comment">// filter logic</span>
+    <span class="hljs-keyword">var</span> parents = Funnel(targets.target)
+        .parents()
+        .getStack();
+    <span class="hljs-keyword">return</span> Funnel(targets.target)
+        .concat(parents)
+        .classes(<span class="hljs-string">"cont"</span>)
+        .getElement();
+});</code></pre><pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"second_body_click"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Second Clicked!"</span>, filter_name);
+    <span class="hljs-comment">// logic...</span>
+});</code></pre><pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Second Body Click Interaction"</span>)
     .on(<span class="hljs-string">"click"</span>)
     .anchors(<span class="hljs-built_in">document</span>)
     .filters(<span class="hljs-string">"container_click"</span>)
     .handler(<span class="hljs-string">"second_body_click"</span>)
     .fireCount(<span class="hljs-number">5</span>)
-    .enable();</code></pre><ul class="list">
-<li>Click event.</li>
-<li>Give interaction the name <code>Body Scroll</code>.</li>
-<li>Interaction will get an id of <code>intBodyScroll</code>.</li>
-<li>Will get bound to the <code>document</code>.</li>
-<li>Will fire the <code>body_mouswheel</code> handler.</li>
-<li>Will only fire the handler <code>10</code> times. <ul class="list">
-<li>Handler will be automatically removed after fire count hits zero.</li>
-</ul>
-</li>
-</ul>
-<pre class="hljs"><code><span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Body Scroll"</span>)
-    .id(<span class="hljs-string">"intBodyScroll"</span>)
-    .on(<span class="hljs-string">"mousewheel"</span>)
-    .anchors(<span class="hljs-built_in">document</span>)
-    .handler(<span class="hljs-string">"body_mouswheel"</span>)
-    .fireCount(<span class="hljs-number">10</span>)
-    .enable();</code></pre><ul class="list">
-<li>Mouseenter event.</li>
-<li>Give interaction the name <code>Container Mouseenter</code>.</li>
-<li>Will get bound to the <code>document</code>.</li>
-<li>Will use the <code>container_mouseover@mouseenter</code> delegation filter.<ul class="list">
-<li>When any filter passes the handler gets invoked.</li>
-<li>The <code>@mouseenter</code> tells the library to treat the mouseover event as a mouseenter.</li>
-</ul>
-</li>
-<li>Will fire the <code>container_mouseover</code> handler.</li>
-</ul>
-<pre class="hljs"><code><span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Container Mouseenter"</span>)
-    .on(<span class="hljs-string">"mouseover"</span>)
-    .anchors(<span class="hljs-built_in">document</span>)
-    .filters(<span class="hljs-string">"container_mouseover@mouseenter"</span>)
-    .handler(<span class="hljs-string">"container_mouseover"</span>)
-    .enable();</code></pre><ul class="list">
-<li>Mouseenter event.</li>
-<li>Give interaction the name <code>Container Mouseleave</code>.</li>
-<li>Will get bound to the <code>document</code>.</li>
-<li>Will use the <code>container_mouseleave@mouseleave</code> delegation filter.<ul class="list">
-<li>The <code>@mouseleave</code> tells the library to treat the mouseover event as a mouseleave.</li>
-</ul>
-</li>
-<li>Will fire the <code>container_mouseleave</code> handler.</li>
-</ul>
-<pre class="hljs"><code><span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Container Mouseleave"</span>)
-    .on(<span class="hljs-string">"mouseout"</span>)
-    .anchors(<span class="hljs-built_in">document</span>)
-    .filters(<span class="hljs-string">"container_mouseleave@mouseleave"</span>)
-    .handler(<span class="hljs-string">"container_mouseleave"</span>)
-    .enable();</code></pre><ul class="list">
-<li>Mouseover event.</li>
-<li>Give interaction the name <code>Input Mouseenter</code>.</li>
-<li>Interaction will get an id of <code>intInputMouseenter</code>.</li>
-<li>Will get bound to the <code>document</code>.</li>
-<li>Will use the namespace <code>input</code>.<ul class="list">
-<li>When any filter passes the handler gets invoked.</li>
-</ul>
-</li>
-<li>Will use the <code>input_mouseover</code> delegation filter.<ul class="list">
-<li>When any filter passes the handler gets invoked.</li>
-</ul>
-</li>
-<li>Will fire the <code>input_mouseover</code> handler.</li>
-</ul>
-<pre class="hljs"><code><span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Input Mouseenter"</span>)
-    .id(<span class="hljs-string">"intInputMouseenter"</span>)
-    .on(<span class="hljs-string">"mouseover"</span>)
-    .namespace(<span class="hljs-string">"input"</span>)
-    .anchors(<span class="hljs-built_in">document</span>)
-    .filters(<span class="hljs-string">"input_mouseover"</span>)
-    .handler(<span class="hljs-string">"input_mouseover"</span>)
-    .enable();</code></pre><ul class="list">
-<li>Custom event <code>:build</code>.<ul class="list">
-<li>Custom events should be prefixed with a colon.</li>
-</ul>
-</li>
-<li>Give interaction the name <code>Custom Event</code>.</li>
-<li>Interaction will get an id of <code>intCustomEvent</code>.</li>
-<li>Will get bound to the <code>document</code>.</li>
-<li>Will fire the <code>custom_event</code> handler.</li>
-</ul>
-<pre class="hljs"><code><span class="hljs-comment">// Custom Event Example</span>
-<span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Custom Event"</span>)
-    .id(<span class="hljs-string">"intCustomEvent"</span>)
-    .on(<span class="hljs-string">":build"</span>)
-    .anchors(<span class="hljs-built_in">document</span>)
-    .handler(<span class="hljs-string">"custom_event"</span>)
     .enable();</code></pre><p><a name="example-triggering"></a></p>
 <h3 id="triggering-examples">Triggering Examples</h3>
-<p><strong>Triggering With No Delegation</strong></p>
-<pre class="hljs"><code><span class="hljs-comment">// trigger examples (no delegation)</span>
-Interaction.trigger(<span class="hljs-string">"intCustomEvent"</span>, {
+<p><strong>No Delegation</strong> &mdash; No target elements just the optional data object.</p>
+<pre class="hljs"><code>Interaction.trigger(<span class="hljs-string">"intCustomEvent"</span>, {
     <span class="hljs-attr">data</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]
 });
+
 Interaction.trigger(<span class="hljs-string">"intWindowResize"</span>, {
     <span class="hljs-attr">data</span>: <span class="hljs-built_in">Date</span>.now()
 });
-Interaction.trigger(<span class="hljs-string">"intBodyScroll"</span>); <span class="hljs-comment">// no options</span></code></pre><p><strong>Triggering With Delegation</strong></p>
-<pre class="hljs"><code><span class="hljs-keyword">var</span> $cont = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"cont"</span>);
-Interaction.trigger(<span class="hljs-string">"intMainBodyClick"</span>, {
+
+Interaction.trigger(<span class="hljs-string">"intBodyScroll"</span>); <span class="hljs-comment">// no options</span></code></pre><p><strong>Delegation</strong> &mdash; Make sure to pass the correct target elements.</p>
+<pre class="hljs"><code>Interaction.trigger(<span class="hljs-string">"intMainBodyClick"</span>, {
     <span class="hljs-attr">targets</span>: {
-        <span class="hljs-attr">target</span>: $cont
+        <span class="hljs-attr">target</span>: <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"cont"</span>)
     },
     <span class="hljs-attr">data</span>: {
         <span class="hljs-string">"key"</span>: <span class="hljs-string">"value"</span>
     }
 });
-<span class="hljs-keyword">var</span> $first_input = Funnel(<span class="hljs-built_in">document</span>.body)
-    .all()
-    .tags(<span class="hljs-string">"input"</span>)
-    .getElement();
+
 Interaction.trigger(<span class="hljs-string">"intInputMouseenter"</span>, {
     <span class="hljs-attr">targets</span>: {
-        <span class="hljs-attr">target</span>: $first_input
+        <span class="hljs-attr">target</span>: Funnel(<span class="hljs-built_in">document</span>.body).all().tags(<span class="hljs-string">"input"</span>).getElement()
     }
 });</code></pre><p><a name="contributing"></a></p>
 <h3 id="contributing">Contributing</h3>

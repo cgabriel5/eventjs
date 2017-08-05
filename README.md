@@ -11,7 +11,18 @@ Small library for event handling.
     - [Global](#global-api)
     - [Instance](#instance-api)
 - [Usage](#usage)
-    - [Step By Step](#example-triggering)
+    - [Overview](#example-overview)
+        - [Click Event](#example-click-event)
+        - [Resize Event](#example-resize-event)
+        - [Scroll Event](#example-scroll-event)
+        - [Cloning Event](#example-cloning-event)
+        - [Custom Event](#example-custom-event)
+        - [Event Delegation](#example-event-delegation)
+            - [Mouseenter Event](#example-mouseenter-event)
+            - [Mouseleave Event](#example-mouseleave-event)
+            - [Mouseover Event](#example-mouseover-event)
+            - [Click Delegation Example 1](#example-click-delegation-1)
+            - [Click Delegation Example 2](#example-click-delegation-2)
     - [Triggering](#example-triggering)
 - [Contributing](#contributing)
 - [License](#license)
@@ -476,20 +487,228 @@ var interaction = new Interaction("Main Body Click.", "custom")
 
 For a better understanding check out `index.html` and `js/source/test.js`. `js/source/test.js` contains examples showing how the library is used.
 
-**Note:** [FunnelJS](https://github.com/cgabriel5/funneljs) is used in the filters for the `js/source/test.js` examples as well as in the examples below. [FunnelJS](https://github.com/cgabriel5/funneljs) is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering can be done using VanillaJS. The library is just very useful for things like event delegation.
+**Note:** [FunnelJS](https://github.com/cgabriel5/funneljs) is used in the filters for the `js/source/test.js` examples as well as in the examples below. [FunnelJS](https://github.com/cgabriel5/funneljs) is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering can be done using VanillaJS. The library is just very useful for filtering elements.
 
-**Step 1** &mdash; Get needed libraries.
+**Note**: The following are just examples and is not an exhaustive list of the supported events. The library is just a wrapper for the `addEventListener`. Therefore, all native JavaScript events may be used.
+
+**Overview** &mdash; Usage overview.
+
+- Using interactions work in one of two patterns:
+    - No event delegation:
+        - **Step 1** &mdash; Add handler.
+        - **Step 2** &mdash; Create interaction.
+    - Event delegation:
+        - **Step 1** &mdash; Add delegation filter.
+        - **Step 2** &mdash; Add handler.
+        - **Step 3** &mdash; Create interaction.
+
+<a name="example-click-event"></a>
+**Click Event** &mdash; A simple click event example.
 
 ```js
-// get the libs
-var libs = app.libs,
-    Interaction = libs.Interaction,
-    Funnel = libs.Funnel;
+Interaction.addHandler("container_click", function(e, targets, filter_name) {
+    console.log("Container Clicked!", filter_name);
+    // logic...
+});
+```
+```js
+var event = new Interaction("Container click!") 
+    .on("click")
+    .anchors(Funnel("#cont").getElement()) 
+    .handler("container_click")
+    .fireCount(4)
+    .enable();
 ```
 
-**Step 2** &mdash; Add delegation filters (only when event delegation is needed).
+<a name="example-resize-event"></a>
+**Resize Event** &mdash; Monitor the window for any resizing.
 
-**Note**: Filter functions are used when using event delegation. They can be thought of as middleware functions because they only serve to filter the wanted target element. When a target element passes the filter only then will the interaction's handler be invoked. The passing target can then be accessed from within the handler via the targets object (second parameter). 
+```js
+Interaction.addHandler("window_resize", function(e, targets, filter_name) {
+    console.log("Resized!", filter_name);
+    // logic...
+});
+```
+
+```js
+var event = new Interaction("Window Resize!")
+    .id("intWindowResize")
+    .on("resize")
+    .anchors(window)
+    .handler("window_resize")
+    // .throttle(300) // <-- *debounce or throttle heavy interactions*
+    // .debounce(300) // <-- *debounce or throttle heavy interactions*
+    .fireCount(20)
+    .enable();
+```
+
+- **Note**: Heavy events like the resize event should be throttled or debounced when used as they can hamper and bog down the user's browser. 
+
+<a name="example-scroll-event"></a>
+**Scroll Event** &mdash; Simple scroll event example.
+
+```js
+Interaction.addHandler("body_mouswheel", function(e, targets, filter_name) {
+    console.log("Body scroll!", filter_name);
+    // logic...
+});
+```
+
+```js
+var event = new Interaction("Body Scroll")
+    .id("intBodyScroll")
+    .on("mousewheel")
+    .anchors(document)
+    .handler("body_mouswheel")
+    .fireCount(10)
+    .enable();
+```
+
+- **Note**: The `mousewheel` can be used for all browsers. Internally the correct `mousewheel` or `DOMMouseScroll` event will be applied.
+
+<a name="example-cloning-event"></a>
+**Cloning Event** &mdash; Interactions can also be cloned.
+
+- **Note**: A cloned interaction will use the source interaction's handler unless reset and updated to a new handler.
+
+```js
+var event = new Interaction("My Cloned Interaction", "intWindowResize")
+    // change any options here...
+    .reset("id")
+    .id("intWindowResizeClone")
+    .enable();
+```
+
+<a name="example-custom-event"></a>
+**Custom Event** &mdash; Custom events can also be created.
+
+```js
+Interaction.addHandler("custom_event", function(e, targets, filter_name) {
+    console.log("Custom Event!", filter_name);
+    // logic...
+});
+```
+
+```js
+// Custom Event Example
+var event = new Interaction("Custom Event")
+    .id("intCustomEvent")
+    .on(":build")
+    .anchors(document)
+    .handler("custom_event")
+    .enable();
+```
+
+- **Note**: Custom events should be prefixed with a colon.
+
+<a name="example-event-delegation"></a>
+**Event Delegation** &mdash; Some examples using the library for event delegation.
+
+- **Note**: Event delegation requires the use of filter functions. Filter functions can be thought of as middleware functions because they only serve to filter the wanted target element. Only when a target element passes the filter will the interaction's handler be invoked. The passing target can then be accessed from within the handler via the targets object (second parameter). 
+
+<a name="example-mouseenter-event"></a>
+**Mouseenter Event** &mdash; Library provided mouseenter event.
+
+```js
+// Using FunnelJS, filter and return an element that has the class "cont".
+Interaction.addFilter("container_mouseover", function(e, targets) {
+    // filter logic
+    var parents = Funnel(targets.target)
+        .parents()
+        .getStack();
+    return Funnel(targets.target)
+        .concat(parents)
+        .classes("cont")
+        .getElement();
+});
+```
+
+```js
+Interaction.addHandler("container_mouseover", function(e, targets, filter_name) {
+    console.log("Mouseover!", filter_name);
+    // logic...
+});
+```
+
+```js
+var event = new Interaction("Container Mouseenter")
+    .on("mouseover")
+    .anchors(document)
+    .filters("container_mouseover@mouseenter")
+    .handler("container_mouseover")
+    .enable();
+```
+
+- **Note**: When _any_ filter passes the handler gets invoked. The `@mouseenter` tells the library to treat the mouseover event as a mouseenter event.
+
+<a name="example-mouseleave-event"></a>
+**Mouseleave Event** &mdash; Library provided mouseleave event.
+
+```js
+// Using FunnelJS, filter and return an element that has the class "cont".
+Interaction.addFilter("container_mouseleave", function(e, targets) {
+    // filter logic
+    var parents = Funnel(targets.target)
+        .parents()
+        .getStack();
+    return Funnel(targets.target)
+        .concat(parents)
+        .classes("cont")
+        .getElement();
+});
+```
+
+```js
+Interaction.addHandler("container_mouseleave", function(e, targets, filter_name) {
+    console.log("Mouseout!", filter_name);
+    // logic...
+});
+```
+
+```js
+var event = new Interaction("Container Mouseleave")
+    .on("mouseout")
+    .anchors(document)
+    .filters("container_mouseleave@mouseleave")
+    .handler("container_mouseleave")
+    .enable();
+```
+
+- **Note**: When _any_ filter passes the handler gets invoked. The `@mouseleave` tells the library to treat the mouseover event as a mouseleave.
+
+<a name="example-mouseover-event"></a>
+**Mouseover Event Delegation** &mdash; Mouseover event with event delegation.
+
+```js
+// Using FunnelJS, filter and return an element which is of tag type "input.
+Interaction.addFilter("input_mouseover", function(e, targets) {
+    // filter logic
+    return Funnel(targets.target)
+        .tags("input")
+        .getElement();
+});
+```
+
+```js
+Interaction.addHandler("input_mouseover", function(e, targets, filter_name) {
+    console.log("Mouseover Input!", filter_name);
+    // logic...
+});
+```
+
+```js
+var event = new Interaction("Input Mouseenter")
+    .id("intInputMouseenter")
+    .on("mouseover")
+    .namespace("input")
+    .anchors(document)
+    .filters("input_mouseover")
+    .handler("input_mouseover")
+    .enable();
+```
+
+<a name="example-click-delegation-1"></a>
+**Click Delegation Example 1** &mdash; Click event with event delegation.
 
 ```js
 // Using FunnelJS, filter and return an element that has the class "cont".
@@ -510,144 +729,17 @@ Interaction.addFilter("input_click", function(e, targets) {
         .attrs("[id=input]")
         .getElement();
 });
-// Using FunnelJS, filter and return an element that has the class "cont".
-Interaction.addFilter("container_mouseover", function(e, targets) {
-    // filter logic
-    var parents = Funnel(targets.target)
-        .parents()
-        .getStack();
-    return Funnel(targets.target)
-        .concat(parents)
-        .classes("cont")
-        .getElement();
-});
-// Using FunnelJS, filter and return an element that has the class "cont".
-Interaction.addFilter("container_mouseleave", function(e, targets) {
-    // filter logic
-    var parents = Funnel(targets.target)
-        .parents()
-        .getStack();
-    return Funnel(targets.target)
-        .concat(parents)
-        .classes("cont")
-        .getElement();
-});
-// Using FunnelJS, filter and return an element which is of tag type "input.
-Interaction.addFilter("input_mouseover", function(e, targets) {
-    // filter logic
-    return Funnel(targets.target)
-        .tags("input")
-        .getElement();
-});
 ```
 
-**Step 3** &mdash; Add handlers. Actual logic should be handled inside the handler.
-
 ```js
-// register event handlers
 Interaction.addHandler("container_click", function(e, targets, filter_name) {
     console.log("Container Clicked!", filter_name);
     // logic...
 });
-Interaction.addHandler("window_resize", function(e, targets, filter_name) {
-    console.log("Resized!", filter_name);
-    // logic...
-});
-Interaction.addHandler("container_click", function(e, targets, filter_name) {
-    console.log("Clicked!", filter_name);
-    // logic...
-});
-Interaction.addHandler("second_body_click", function(e, targets, filter_name) {
-    console.log("Second Clicked!", filter_name);
-    // logic...
-});
-Interaction.addHandler("body_mouswheel", function(e, targets, filter_name) {
-    console.log("Body scroll!", filter_name);
-    // logic...
-});
-Interaction.addHandler("container_mouseover", function(e, targets, filter_name) {
-    console.log("Mouseover!", filter_name);
-    // logic...
-});
-Interaction.addHandler("container_mouseleave", function(e, targets, filter_name) {
-    console.log("Mouseout!", filter_name);
-    // logic...
-});
-Interaction.addHandler("input_mouseover", function(e, targets, filter_name) {
-    console.log("Mouseover Input!", filter_name);
-    // logic...
-});
-Interaction.addHandler("custom_event", function(e, targets, filter_name) {
-    console.log("Custom Event!", filter_name);
-    // logic...
-});
 ```
 
-**Step 1** &mdash; Create interactions.
-
-- Click event.
-- Give interaction the name `Container click!`.
-- Will anchored/binded to the element with an ID of `#cont`.
-- Will fire the `container_click` handler.
-- Will only fire the handler `4` times. 
-    - Handler will be automatically removed after fire count hits zero.
-
 ```js
-new Interaction("Container click!")
-    .on("click")
-    .anchors(Funnel("#cont").getElement())
-    .handler("container_click")
-    .fireCount(4)
-    .enable();
-```
-
-- Window resize event.
-- Give interaction the name `Window Resize!`.
-- Interaction will get an id of `intWindowResize`.
-- Will get bound to the `window`.
-- Will fire the `window_resize` handler.
-- Will only fire the handler `20` times. 
-    - Handler will be automatically removed after fire count hits zero.
-
-**Note**: Heavy events like the resize event should be throttled or debounced when used as they can hamper and bog down the user's browser. 
-
-```js
-new Interaction("Window Resize!")
-    .id("intWindowResize")
-    .on("resize")
-    .anchors(window)
-    .handler("window_resize")
-    // .throttle(3000) // <-- *debounce or throttle heavy interactions*
-    // .debounce(300) // <-- *debounce or throttle heavy interactions*
-    .fireCount(20)
-    .enable();
-```
-
-- Cloning interaction.
-- Give interaction the name `My Cloned Interaction`.
-- Will clone the `intWindowResize` interaction.
-- `reset` method used to reset the id.
-- Change the id to `intWindowResizeClone`.
-
-```js
-// A Cloned Interaction
-new Interaction("My Cloned Interaction", "intWindowResize")
-    // change any options here...
-    .reset("id")
-    .id("intWindowResizeClone")
-    .enable();
-```
-
-- Click event.
-- Give interaction the name `Main Body Click Interaction`.
-- Interaction will get an id of `intWindowResize`.
-- Will get bound to the `document`.
-- Will use the `container_click` and `input_click` delegation filters.
-    - When any filter passes the handler gets invoked.
-- Will fire the `window_resize` handler.
-
-```js
-new Interaction("Main Body Click Interaction")
+var event = new Interaction("Main Body Click Interaction")
     .id("intMainBodyClick")
     .on("click")
     .anchors(document)
@@ -656,17 +748,32 @@ new Interaction("Main Body Click Interaction")
     .enable();
 ```
 
-- Click event.
-- Give interaction the name `Second Body Click Interaction`.
-- Will get bound to the `document`.
-- Will use the `container_click` delegation filter.
-    - When any filter passes the handler gets invoked.
-- Will fire the `second_body_click` handler.
-- Will only fire the handler `5` times. 
-    - Handler will be automatically removed after fire count hits zero.
+<a name="example-click-delegation-2"></a>
+**Click Delegation Example 2** &mdash; Click event with event delegation.
 
 ```js
-new Interaction("Second Body Click Interaction")
+// Using FunnelJS, filter and return an element that has the class "cont".
+Interaction.addFilter("container_click", function(e, targets) {
+    // filter logic
+    var parents = Funnel(targets.target)
+        .parents()
+        .getStack();
+    return Funnel(targets.target)
+        .concat(parents)
+        .classes("cont")
+        .getElement();
+});
+```
+
+```js
+Interaction.addHandler("second_body_click", function(e, targets, filter_name) {
+    console.log("Second Clicked!", filter_name);
+    // logic...
+});
+```
+
+```js
+var event = new Interaction("Second Body Click Interaction")
     .on("click")
     .anchors(document)
     .filters("container_click")
@@ -675,130 +782,38 @@ new Interaction("Second Body Click Interaction")
     .enable();
 ```
 
-- Click event.
-- Give interaction the name `Body Scroll`.
-- Interaction will get an id of `intBodyScroll`.
-- Will get bound to the `document`.
-- Will fire the `body_mouswheel` handler.
-- Will only fire the handler `10` times. 
-    - Handler will be automatically removed after fire count hits zero.
-
-```js
-new Interaction("Body Scroll")
-    .id("intBodyScroll")
-    .on("mousewheel")
-    .anchors(document)
-    .handler("body_mouswheel")
-    .fireCount(10)
-    .enable();
-```
-
-- Mouseenter event.
-- Give interaction the name `Container Mouseenter`.
-- Will get bound to the `document`.
-- Will use the `container_mouseover@mouseenter` delegation filter.
-    - When any filter passes the handler gets invoked.
-    - The `@mouseenter` tells the library to treat the mouseover event as a mouseenter.
-- Will fire the `container_mouseover` handler.
-
-```js
-new Interaction("Container Mouseenter")
-    .on("mouseover")
-    .anchors(document)
-    .filters("container_mouseover@mouseenter")
-    .handler("container_mouseover")
-    .enable();
-```
-
-- Mouseenter event.
-- Give interaction the name `Container Mouseleave`.
-- Will get bound to the `document`.
-- Will use the `container_mouseleave@mouseleave` delegation filter.
-    - The `@mouseleave` tells the library to treat the mouseover event as a mouseleave.
-- Will fire the `container_mouseleave` handler.
-
-```js
-new Interaction("Container Mouseleave")
-    .on("mouseout")
-    .anchors(document)
-    .filters("container_mouseleave@mouseleave")
-    .handler("container_mouseleave")
-    .enable();
-```
-
-- Mouseover event.
-- Give interaction the name `Input Mouseenter`.
-- Interaction will get an id of `intInputMouseenter`.
-- Will get bound to the `document`.
-- Will use the namespace `input`.
-    - When any filter passes the handler gets invoked.
-- Will use the `input_mouseover` delegation filter.
-    - When any filter passes the handler gets invoked.
-- Will fire the `input_mouseover` handler.
-
-```js
-new Interaction("Input Mouseenter")
-    .id("intInputMouseenter")
-    .on("mouseover")
-    .namespace("input")
-    .anchors(document)
-    .filters("input_mouseover")
-    .handler("input_mouseover")
-    .enable();
-```
-
-- Custom event `:build`.
-    - Custom events should be prefixed with a colon.
-- Give interaction the name `Custom Event`.
-- Interaction will get an id of `intCustomEvent`.
-- Will get bound to the `document`.
-- Will fire the `custom_event` handler.
-
-```js
-// Custom Event Example
-new Interaction("Custom Event")
-    .id("intCustomEvent")
-    .on(":build")
-    .anchors(document)
-    .handler("custom_event")
-    .enable();
-```
-
 <a name="example-triggering"></a>
 ### Triggering Examples
 
-**Triggering With No Delegation**
+**No Delegation** &mdash; No target elements just the optional data object.
 
 ```js
-// trigger examples (no delegation)
 Interaction.trigger("intCustomEvent", {
     data: [1, 2, 3]
 });
+
 Interaction.trigger("intWindowResize", {
     data: Date.now()
 });
+
 Interaction.trigger("intBodyScroll"); // no options
 ```
 
-**Triggering With Delegation**
+**Delegation** &mdash; Make sure to pass the correct target elements.
 
 ```js
-var $cont = document.getElementById("cont");
 Interaction.trigger("intMainBodyClick", {
     targets: {
-        target: $cont
+        target: document.getElementById("cont")
     },
     data: {
         "key": "value"
     }
 });
-var $first_input = Funnel(document.body)
-    .all()
-    .tags("input")
-    .getElement();
+
 Interaction.trigger("intInputMouseenter", {
     targets: {
-        target: $first_input
+        target: Funnel(document.body).all().tags("input").getElement()
     }
 });
 ```
