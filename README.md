@@ -69,6 +69,7 @@ document.onreadystatechange = function() {
 
 - [➜ global.interactions()](#global-methods-interactions)
 - [➜ global.interactionsFor()](#global-methods-interactionsfor)
+- [➜ global.interaction()](#global-methods-interaction)
 - [➜ global.trigger()](#global-methods-trigger)
 - [➜ global.disableAll()](#global-methods-disableall)
 - [➜ global.enableAll()](#global-methods-enableall)
@@ -106,13 +107,23 @@ Interaction.interactionsFor(window);
 Interaction.interactionsFor(document.getElementById("container"));
 ```
 
+<a name="global-methods-interaction"></a>
+➜ **global.interaction(`id`)** &mdash; Returns the interaction matching the provided id.
+
+- `id` (`String`, _Required_)
+- **Returns** the interaction matching the provided id.
+
+```js
+Interaction.interaction("interaction_id");
+```
+
 <a name="global-methods-trigger"></a>
 ➜ **global.trigger(`id`, `options`)** &mdash; Triggers an interaction.
 
 - `id` (`String`, _Required_) The interaction id.
 - `options` (`Object`, _Optional_)
     - `targets` (`Object`, _Optional_) The elements to use as targets, primarily intended for delegation use.
-        - **Note**: When delegation is used, provide the correct target elements so that the event's handler works as expected (as if it was naturally invoked). These target elements will be passed to interactions filter functions as well.
+        - **Note**: When event delegation is used provide the correct [target elements](#targets-object) so the event's handler works as expected (as if it was naturally invoked). Providing the necessary target elements will allow the [interaction's filter functions](#delegation-targets) to pass and in turn invoke the handler.
         - `target` (`HTMLElement`, _Optional_)
         - `currentTarget` (`HTMLElement`, _Optional_)
         - `relatedTarget` (`HTMLElement`, _Optional_)
@@ -125,7 +136,7 @@ Interaction.interactionsFor(document.getElementById("container"));
         - `bubbles` (`Boolean`, _Optional_, _Default_: `true`)
         - `cancelable` (`Boolean`, _Optional_, _Default_: `false`)
         - `scoped` (`Boolean`, _Optional_, _Default_: `false`)
-    - `data` (`Any`) Anything can be passed in as data.
+    - `data` (`Any`, _Optional_) Anything may be passed in as data.
 - **Returns** Nothing.
 
 ```js
@@ -153,9 +164,9 @@ Interaction.enableAll();
 ```
 
 <a name="global-methods-remove"></a>
-➜ **global.remove(`id`)** &mdash; Removes interaction with matching provided ID.
+➜ **global.remove(`id`)** &mdash; Removes interaction matching the provided id.
 
-- `id` (`String`, _Required_) The interaction ID.
+- `id` (`String`, _Required_) The interaction id.
 - **Returns** Nothing.
 
 ```js
@@ -197,8 +208,8 @@ Interaction.filters();
 
 - `filterName` (`String`, _Required_) The name of the filter.
 - `handler` (`Function`, _Required_)
-    - `e` (`EventsObject`) The browser event object.
-    - `targets` (`EventsObject`) Library provided normalized target elements object.
+    - `e` (`EventObject`) The browser event object.
+    - `targets` (`Object`) Library provided [normalized target elements](#targets-object) object.
 - **Returns** Nothing.
 
 ```js
@@ -220,8 +231,8 @@ Interaction.removeFilter("filer_name");
 
 - `filterName` (`String`, _Required_) The name of the filter.
 - `handler` (`Function`, _Required_)
-    - `e` (`EventsObject`) The browser event object.
-    - `targets` (`EventsObject`) Library provided normalized target elements object.
+    - `e` (`EventObject`) The browser event object.
+    - `targets` (`Object`) Library provided [normalized target elements](#targets-object) object.
     - `filter_name` (`String`) The filter used, if any.
 - **Returns** Nothing.
 
@@ -247,6 +258,7 @@ Interaction.removeHandler("filer_name");
 - [Instance](#instance-creation)
     - [Delegation (targets)](#delegation-targets)
     - [Targets Object](#targets-object)
+    - [Data Object](#data-object)
     - [➜ instance.id()](#instance-methods-id)
     - [➜ instance.on()](#instance-methods-on)
     - [➜ instance.namespace()](#instance-methods-namespace)
@@ -267,10 +279,10 @@ Interaction.removeHandler("filer_name");
 ### Instance Creation
 
 - `interactionName` (`String`, _Optional_) The name of the interaction.
-- `interactionCloneName` (`String`, _Optional_) The name of the interaction to clone.
+- `interactionCloneID` (`String`, _Optional_) The id of the interaction to clone.
 - **Returns** instance.
 
-**Note**: Using the `new` keyword is not necessary. The library will make sure to use it for when when you don't. 
+**Note**: Using the `new` keyword is not necessary. The library will make sure to use it for when when you don't.
 
 ```js
 // this...
@@ -285,21 +297,21 @@ var interaction = Interaction();
 var interaction = new Interaction("Main Body Click.");
 ```
 
-**Note**: Providing the second parameter (`interactionCloneName`), will clone the options of that interaction to the new interaction. The following example will create a new interaction with a name of "Main Body Click" and will clone the options from the interaction with the name of "custom". 
+**Note**: Providing the second parameter (`interactionCloneID`), will clone the options of that interaction to the new interaction. The following example will create a new interaction with a name of `Main Body Click` and will clone the options from the interaction with the id of `custom`.
 
-**Note**: When cloning, sometimes options need to be reset to its default value. Use the `instance.reset` method for this. The following example code eventually updates the id to "test456", however.
+**Note**: When cloning sometimes options need to be reset to their default value. The `instance.reset` method is used for this. For example, the following example code resets then updates the id to `test456`.
 
 ```js
 var interaction = new Interaction("Main Body Click.", "custom")
     .reset("id") // reset the id
-    .id("test456") // add new ID
+    .id("test456") // add new id
     .enable();
 ```
 
 <a name="delegation-targets"></a>
 ### Delegation (targets)  
 
-The library provides a normalized `targets` object with the event's target elements. This object can be accessed as the second parameter like so...
+The library provides a normalized `targets` object with the event's target elements. This object may be accessed as the second parameter like so...
 
 ```js
 Interaction.addFilter("filer_name", function(e, targets) { /*logic*/ });
@@ -311,26 +323,48 @@ Additionally, when event delegation is used the name of the filter function that
 <a name="targets-object"></a>
 ### Targets Object
 
+**Note**: When triggering an event the `targets` object may either be accessed as the second parameter or from the browser provided `EventObject` (i.e. `event.targets`).
+
 The `targets` object contains the following targets (elements):
 
-- [`target`](https://developer.mozilla.org/en-US/docs/Web/API/Event/target) The element that trigger/dispatched the event 
-- [`currentTarget`](https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget) Always refers to the element that the event handler was attached to
-- [`relatedTarget`](https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/relatedTarget) A mouseevent property that refers to the secondary element involved in the event
-- [`srcElement`](https://developer.mozilla.org/en-US/docs/Web/API/Event/srcElement) Avoid using this event target and use `e.target` as this is just an alias for `e.target`
-- [`fromElement`](http://help.dottoro.com/ljjqfjbs.php) Equivalent to FireFox's relatedTarget
-- [`toElement`](http://help.dottoro.com/ljltrsom.php) Equivalent to FireFox's relatedTarget
-- [`explicitOriginalTarget`](https://developer.mozilla.org/en-US/docs/Web/API/Event/explicitOriginalTarget) FireFox specific and should not be used as they are non-standard
-- [`originalTarget`](https://developer.mozilla.org/en-US/docs/Web/API/Event/originalTarget) FireFox specific and should not be used as they are non-standard
+- [`target`](https://developer.mozilla.org/en-US/docs/Web/API/Event/target) The element that trigger/dispatched the event.
+- [`currentTarget`](https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget) Always refers to the element that the event handler was attached to.
+- [`relatedTarget`](https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/relatedTarget) A mouseevent property that refers to the secondary element involved in the event.
+- [`srcElement`](https://developer.mozilla.org/en-US/docs/Web/API/Event/srcElement) Avoid using this event target and use `e.target` as this is just an alias for `e.target`.
+- [`fromElement`](http://help.dottoro.com/ljjqfjbs.php) Equivalent to FireFox's relatedTarget.
+- [`toElement`](http://help.dottoro.com/ljltrsom.php) Equivalent to FireFox's relatedTarget.
+- [`explicitOriginalTarget`](https://developer.mozilla.org/en-US/docs/Web/API/Event/explicitOriginalTarget) FireFox specific and should not be used as they are non-standard.
+- [`originalTarget`](https://developer.mozilla.org/en-US/docs/Web/API/Event/originalTarget) FireFox specific and should not be used as they are non-standard.
+
+<a name="data-object"></a>
+### Data Object
+
+When triggering an event a `data` object may be passed containing any type of data. The data object is then attached to the browser provided `EventObject`. Accessing it is as simple as `event.data` like so...
+
+```js
+// interaction handler
+Interaction.addHandler("some_handler_name", function(e, targets, filter_name) {
+    var data = e.data; // [1, 2, 3]
+    // do something with data...
+});
+
+// trigger interaction
+Interaction.trigger("some_handler_name", {
+    "data": [1, 2, 3]
+});
+```
+
+**Note**: When event delegation is used provide the correct [target elements](#targets-object) so the event's handler works as expected (as if it was naturally invoked). Providing the necessary target elements will allow the [interaction's filter functions](#delegation-targets) to pass and in turn invoke the handler.
 
 <a name="instance-methods-long"></a>
 ### Instance Methods
 
 <a name="instance-methods-id"></a>
-➜ **instance.id(`id`)** &mdash; Set the interaction ID.
+➜ **instance.id(`id`)** &mdash; Set the interaction id.
 
 - `id` (`String`, _Required_)
-    - **Note**: The provided ID must be unique.
-    - ID is used to access the interaction to remove, enable/disable, trigger, etc.
+    - **Note**: The provided id must be unique.
+    - id is used to access the interaction to remove, enable/disable, trigger, etc.
 - **Returns** instance.
 
 ```js
@@ -341,7 +375,7 @@ interaction.id("some_unique_id");
 ➜ **instance.on(`eventName`, `eventNameN...`)** &mdash; The events to listen for.
 
 - `eventName` (`String`, _Required_)
-    - **Note**: `n` amount of events can be passed.
+    - **Note**: `n` amount of events may be passed.
 - **Returns** instance.
 
 ```js
@@ -352,7 +386,7 @@ interaction.on("click", "wheel");
 ➜ **instance.namespace(`namespace`)** &mdash; The namespace the events should be under.
 
 - `namespace` (`String`, _Required_)
-    - **Note**: Namespace can be nested. Just use dots to separate each namespace.
+    - **Note**: Namespace may be nested. Just use dots to separate each namespace.
 - **Returns** instance.
 
 ```js
@@ -363,7 +397,7 @@ interaction.namespace("namespace1.namespace2.namespaceN");
 ➜ **instance.anchors(`element`, `elementN...`)** &mdash; The elements to attach the events to.
 
 - `element` (`HTMLElement`, _Required_)
-    - **Note**: `n` amount of elements can be passed.
+    - **Note**: `n` amount of elements may be passed.
 - **Returns** instance.
 
 ```js
@@ -372,10 +406,10 @@ interaction.anchors(document, window, $cont);
 ```
 
 <a name="instance-methods-filters"></a>
-➜ **instance.filters(`filter`, `filterN...`)** &mdash; If using event delegation, filters can be used to filter out the wanted element(s).
+➜ **instance.filters(`filter`, `filterN...`)** &mdash; If using event delegation, filters may be used to filter out the wanted element(s).
 
 - `filter` (`String`, _Required_)
-    - **Note**: `n` amount of filters can be passed.
+    - **Note**: `n` amount of filters may be passed.
 - **Returns** instance.
 
 ```js
@@ -420,7 +454,7 @@ interaction.passive(true);
 - `time` (`Number`, _Required_)
 - **Returns** instance.
 
-**Note**: The event can be throttled or debounced but not both.
+**Note**: The event may be throttled or debounced but not both.
 
 ```js
 interaction.debounce(250);
@@ -432,7 +466,7 @@ interaction.debounce(250);
 - `time` (`Number`, _Required_)
 - **Returns** instance.
 
-**Note**: The event can be throttled or debounced but not both.
+**Note**: The event may be throttled or debounced but not both.
 
 ```js
 interaction.throttle(250);
@@ -472,7 +506,7 @@ interaction.disable();
 ➜ **instance.reset(`propName`, `propNameN...`)** &mdash; Resets properties to its default.
 
 - `propName` (`String`, _Required_)
-    - **Note**: `n` amount of property names can be passed.
+    - **Note**: `n` amount of property names may be passed.
 - **Returns** instance.
 
 **Note**: This method is really meant to be used when cloning an interaction as it resets a property that is needed to change.
@@ -480,7 +514,7 @@ interaction.disable();
 ```js
 var interaction = new Interaction("Main Body Click.", "custom")
     .reset("id") // reset the id
-    .id("test456") // add new ID
+    .id("test456") // add new id
     .enable();
 ```
 
@@ -489,7 +523,7 @@ var interaction = new Interaction("Main Body Click.", "custom")
 
 For a better understanding check out `index.html` and `js/source/test.js`. `js/source/test.js` contains examples showing how the library is used.
 
-**Note:** [FunnelJS](https://github.com/cgabriel5/funneljs) is used in the filters for the `js/source/test.js` examples as well as in the examples below. [FunnelJS](https://github.com/cgabriel5/funneljs) is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering can be done using VanillaJS. The library is just very useful for filtering elements.
+**Note:** [FunnelJS](https://github.com/cgabriel5/funneljs) is used in the filters for the `js/source/test.js` examples as well as in the examples below. [FunnelJS](https://github.com/cgabriel5/funneljs) is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering may be done using VanillaJS. The library is just very useful for filtering elements.
 
 **Note**: The following are just examples and is not an exhaustive list of the supported events. The library is just a wrapper for the `addEventListener`. Therefore, all native JavaScript events may be used.
 
@@ -545,7 +579,7 @@ var event = new Interaction("Window Resize!")
     .enable();
 ```
 
-- **Note**: Heavy events like the resize event should be throttled or debounced when used as they can hamper and bog down the user's browser. 
+- **Note**: Heavy events like the resize event should be throttled or debounced when used as they may hamper and bog down the user's browser.
 
 <a name="example-mousewheel-event"></a>
 **MouseWheel Event** &mdash; Simple scroll event example.
@@ -567,10 +601,10 @@ var event = new Interaction("Body Scroll")
     .enable();
 ```
 
-- **Note**: The `mousewheel` can be used for all browsers. Internally the correct `mousewheel` or `DOMMouseScroll` event will be applied.
+- **Note**: The `mousewheel` may be used for all browsers. Internally the correct `mousewheel` or `DOMMouseScroll` event will be applied.
 
 <a name="example-cloning-event"></a>
-**Cloning Event** &mdash; Interactions can also be cloned.
+**Cloning Event** &mdash; Interactions may also be cloned.
 
 - **Note**: A cloned interaction will use the source interaction's handler unless reset and updated to a new handler.
 
@@ -583,7 +617,7 @@ var event = new Interaction("My Cloned Interaction", "intWindowResize")
 ```
 
 <a name="example-custom-event"></a>
-**Custom Event** &mdash; Custom events can also be created.
+**Custom Event** &mdash; Custom events may also be created.
 
 ```js
 Interaction.addHandler("custom_event", function(e, targets, filter_name) {
@@ -607,7 +641,7 @@ var event = new Interaction("Custom Event")
 <a name="example-event-delegation"></a>
 **Event Delegation** &mdash; Some examples using the library for event delegation.
 
-- **Note**: Event delegation requires the use of filter functions. Filter functions are middleware functions because they only serve to filter the wanted target element. Only when a target element passes a filter will the interaction's handler be invoked. The passing target can then be accessed from within the handler via the [targets object (second parameter)](#delegation-targets).
+- **Note**: Event delegation requires the use of filter functions. Filter functions are middleware functions because they only serve to filter the wanted target element. Only when a target element passes a filter will the interaction's handler be invoked. The passing target may then be accessed from within the handler via the [targets object (second parameter)](#delegation-targets).
 
 <a name="example-mouseenter-event"></a>
 **Mouseenter Event** &mdash; Library provided mouseenter event.

@@ -78,6 +78,7 @@
 <ul class="list">
 <li><a href="#global-methods-interactions">➜ global.interactions()</a></li>
 <li><a href="#global-methods-interactionsfor">➜ global.interactionsFor()</a></li>
+<li><a href="#global-methods-interaction">➜ global.interaction()</a></li>
 <li><a href="#global-methods-trigger">➜ global.trigger()</a></li>
 <li><a href="#global-methods-disableall">➜ global.disableAll()</a></li>
 <li><a href="#global-methods-enableall">➜ global.enableAll()</a></li>
@@ -106,13 +107,19 @@
 </ul>
 <pre class="hljs"><code>Interaction.interactionsFor(<span class="hljs-built_in">document</span>);
 Interaction.interactionsFor(<span class="hljs-built_in">window</span>);
-Interaction.interactionsFor(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"container"</span>));</code></pre><p><a name="global-methods-trigger"></a>
+Interaction.interactionsFor(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"container"</span>));</code></pre><p><a name="global-methods-interaction"></a>
+➜ <strong>global.interaction(<code>id</code>)</strong> &mdash; Returns the interaction matching the provided id.</p>
+<ul class="list">
+<li><code>id</code> (<code>String</code>, <em>Required</em>)</li>
+<li><strong>Returns</strong> the interaction matching the provided id.</li>
+</ul>
+<pre class="hljs"><code>Interaction.interaction(<span class="hljs-string">"interaction_id"</span>);</code></pre><p><a name="global-methods-trigger"></a>
 ➜ <strong>global.trigger(<code>id</code>, <code>options</code>)</strong> &mdash; Triggers an interaction.</p>
 <ul class="list">
 <li><code>id</code> (<code>String</code>, <em>Required</em>) The interaction id.</li>
 <li><code>options</code> (<code>Object</code>, <em>Optional</em>)<ul class="list">
 <li><code>targets</code> (<code>Object</code>, <em>Optional</em>) The elements to use as targets, primarily intended for delegation use.<ul class="list">
-<li><strong>Note</strong>: When delegation is used, provide the correct target elements so that the event&#39;s handler works as expected (as if it was naturally invoked). These target elements will be passed to interactions filter functions as well.</li>
+<li><strong>Note</strong>: When event delegation is used provide the correct <a href="#targets-object">target elements</a> so the event&#39;s handler works as expected (as if it was naturally invoked). Providing the necessary target elements will allow the <a href="#delegation-targets">interaction&#39;s filter functions</a> to pass and in turn invoke the handler.</li>
 <li><code>target</code> (<code>HTMLElement</code>, <em>Optional</em>)</li>
 <li><code>currentTarget</code> (<code>HTMLElement</code>, <em>Optional</em>)</li>
 <li><code>relatedTarget</code> (<code>HTMLElement</code>, <em>Optional</em>)</li>
@@ -129,7 +136,7 @@ Interaction.interactionsFor(<span class="hljs-built_in">document</span>.getEleme
 <li><code>scoped</code> (<code>Boolean</code>, <em>Optional</em>, <em>Default</em>: <code>false</code>)</li>
 </ul>
 </li>
-<li><code>data</code> (<code>Any</code>) Anything can be passed in as data.</li>
+<li><code>data</code> (<code>Any</code>, <em>Optional</em>) Anything may be passed in as data.</li>
 </ul>
 </li>
 <li><strong>Returns</strong> Nothing.</li>
@@ -147,9 +154,9 @@ Interaction.interactionsFor(<span class="hljs-built_in">document</span>.getEleme
 <li><strong>Returns</strong> Nothing.</li>
 </ul>
 <pre class="hljs"><code>Interaction.enableAll();</code></pre><p><a name="global-methods-remove"></a>
-➜ <strong>global.remove(<code>id</code>)</strong> &mdash; Removes interaction with matching provided ID.</p>
+➜ <strong>global.remove(<code>id</code>)</strong> &mdash; Removes interaction matching the provided id.</p>
 <ul class="list">
-<li><code>id</code> (<code>String</code>, <em>Required</em>) The interaction ID.</li>
+<li><code>id</code> (<code>String</code>, <em>Required</em>) The interaction id.</li>
 <li><strong>Returns</strong> Nothing.</li>
 </ul>
 <pre class="hljs"><code>Interaction.remove(<span class="hljs-string">"interaction_id"</span>);</code></pre><p><a name="global-methods-removeall"></a>
@@ -175,8 +182,8 @@ Interaction.interactionsFor(<span class="hljs-built_in">document</span>.getEleme
 <ul class="list">
 <li><code>filterName</code> (<code>String</code>, <em>Required</em>) The name of the filter.</li>
 <li><code>handler</code> (<code>Function</code>, <em>Required</em>)<ul class="list">
-<li><code>e</code> (<code>EventsObject</code>) The browser event object.</li>
-<li><code>targets</code> (<code>EventsObject</code>) Library provided normalized target elements object.</li>
+<li><code>e</code> (<code>EventObject</code>) The browser event object.</li>
+<li><code>targets</code> (<code>Object</code>) Library provided <a href="#targets-object">normalized target elements</a> object.</li>
 </ul>
 </li>
 <li><strong>Returns</strong> Nothing.</li>
@@ -192,8 +199,8 @@ Interaction.interactionsFor(<span class="hljs-built_in">document</span>.getEleme
 <ul class="list">
 <li><code>filterName</code> (<code>String</code>, <em>Required</em>) The name of the filter.</li>
 <li><code>handler</code> (<code>Function</code>, <em>Required</em>)<ul class="list">
-<li><code>e</code> (<code>EventsObject</code>) The browser event object.</li>
-<li><code>targets</code> (<code>EventsObject</code>) Library provided normalized target elements object.</li>
+<li><code>e</code> (<code>EventObject</code>) The browser event object.</li>
+<li><code>targets</code> (<code>Object</code>) Library provided <a href="#targets-object">normalized target elements</a> object.</li>
 <li><code>filter_name</code> (<code>String</code>) The filter used, if any.</li>
 </ul>
 </li>
@@ -212,6 +219,7 @@ Interaction.interactionsFor(<span class="hljs-built_in">document</span>.getEleme
 <li><a href="#instance-creation">Instance</a><ul class="list">
 <li><a href="#delegation-targets">Delegation (targets)</a></li>
 <li><a href="#targets-object">Targets Object</a></li>
+<li><a href="#data-object">Data Object</a></li>
 <li><a href="#instance-methods-id">➜ instance.id()</a></li>
 <li><a href="#instance-methods-on">➜ instance.on()</a></li>
 <li><a href="#instance-methods-namespace">➜ instance.namespace()</a></li>
@@ -234,45 +242,59 @@ Interaction.interactionsFor(<span class="hljs-built_in">document</span>.getEleme
 <h3 id="instance-creation">Instance Creation</h3>
 <ul class="list">
 <li><code>interactionName</code> (<code>String</code>, <em>Optional</em>) The name of the interaction.</li>
-<li><code>interactionCloneName</code> (<code>String</code>, <em>Optional</em>) The name of the interaction to clone.</li>
+<li><code>interactionCloneID</code> (<code>String</code>, <em>Optional</em>) The id of the interaction to clone.</li>
 <li><strong>Returns</strong> instance.</li>
 </ul>
-<p><strong>Note</strong>: Using the <code>new</code> keyword is not necessary. The library will make sure to use it for when when you don&#39;t. </p>
+<p><strong>Note</strong>: Using the <code>new</code> keyword is not necessary. The library will make sure to use it for when when you don&#39;t.</p>
 <pre class="hljs"><code><span class="hljs-comment">// this...</span>
 <span class="hljs-keyword">var</span> interaction = <span class="hljs-keyword">new</span> Interaction();
 <span class="hljs-comment">// is the same as this</span>
 <span class="hljs-keyword">var</span> interaction = Interaction();</code></pre><p><strong>Note</strong>: Interaction name be provided upon instance creation. Although not necessary it serves as a human identifier for what the interaction is for.</p>
-<pre class="hljs"><code><span class="hljs-keyword">var</span> interaction = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Main Body Click."</span>);</code></pre><p><strong>Note</strong>: Providing the second parameter (<code>interactionCloneName</code>), will clone the options of that interaction to the new interaction. The following example will create a new interaction with a name of &quot;Main Body Click&quot; and will clone the options from the interaction with the name of &quot;custom&quot;. </p>
-<p><strong>Note</strong>: When cloning, sometimes options need to be reset to its default value. Use the <code>instance.reset</code> method for this. The following example code eventually updates the id to &quot;test456&quot;, however.</p>
+<pre class="hljs"><code><span class="hljs-keyword">var</span> interaction = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Main Body Click."</span>);</code></pre><p><strong>Note</strong>: Providing the second parameter (<code>interactionCloneID</code>), will clone the options of that interaction to the new interaction. The following example will create a new interaction with a name of <code>Main Body Click</code> and will clone the options from the interaction with the id of <code>custom</code>.</p>
+<p><strong>Note</strong>: When cloning sometimes options need to be reset to their default value. The <code>instance.reset</code> method is used for this. For example, the following example code resets then updates the id to <code>test456</code>.</p>
 <pre class="hljs"><code><span class="hljs-keyword">var</span> interaction = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Main Body Click."</span>, <span class="hljs-string">"custom"</span>)
     .reset(<span class="hljs-string">"id"</span>) <span class="hljs-comment">// reset the id</span>
-    .id(<span class="hljs-string">"test456"</span>) <span class="hljs-comment">// add new ID</span>
+    .id(<span class="hljs-string">"test456"</span>) <span class="hljs-comment">// add new id</span>
     .enable();</code></pre><p><a name="delegation-targets"></a></p>
 <h3 id="delegation-(targets)">Delegation (targets)</h3>
-<p>The library provides a normalized <code>targets</code> object with the event&#39;s target elements. This object can be accessed as the second parameter like so...</p>
+<p>The library provides a normalized <code>targets</code> object with the event&#39;s target elements. This object may be accessed as the second parameter like so...</p>
 <pre class="hljs"><code>Interaction.addFilter(<span class="hljs-string">"filer_name"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{ <span class="hljs-comment">/*logic*/</span> });
 Interaction.addHandler(<span class="hljs-string">"filer_name"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{ <span class="hljs-comment">/*logic*/</span> });</code></pre><p>Additionally, when event delegation is used the name of the filter function that passed, if any, is returned. This is useful when multiple filter functions are used for a single interaction. The passing filter will always be passed as the third parameter.</p>
 <p><a name="targets-object"></a></p>
 <h3 id="targets-object">Targets Object</h3>
+<p><strong>Note</strong>: When triggering an event the <code>targets</code> object may either be accessed as the second parameter or from the browser provided <code>EventObject</code> (i.e. <code>event.targets</code>).</p>
 <p>The <code>targets</code> object contains the following targets (elements):</p>
 <ul class="list">
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/target"><code>target</code></a> The element that trigger/dispatched the event </li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget"><code>currentTarget</code></a> Always refers to the element that the event handler was attached to</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/relatedTarget"><code>relatedTarget</code></a> A mouseevent property that refers to the secondary element involved in the event</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/srcElement"><code>srcElement</code></a> Avoid using this event target and use <code>e.target</code> as this is just an alias for <code>e.target</code></li>
-<li><a href="http://help.dottoro.com/ljjqfjbs.php"><code>fromElement</code></a> Equivalent to FireFox&#39;s relatedTarget</li>
-<li><a href="http://help.dottoro.com/ljltrsom.php"><code>toElement</code></a> Equivalent to FireFox&#39;s relatedTarget</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/explicitOriginalTarget"><code>explicitOriginalTarget</code></a> FireFox specific and should not be used as they are non-standard</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/originalTarget"><code>originalTarget</code></a> FireFox specific and should not be used as they are non-standard</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/target"><code>target</code></a> The element that trigger/dispatched the event.</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget"><code>currentTarget</code></a> Always refers to the element that the event handler was attached to.</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/relatedTarget"><code>relatedTarget</code></a> A mouseevent property that refers to the secondary element involved in the event.</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/srcElement"><code>srcElement</code></a> Avoid using this event target and use <code>e.target</code> as this is just an alias for <code>e.target</code>.</li>
+<li><a href="http://help.dottoro.com/ljjqfjbs.php"><code>fromElement</code></a> Equivalent to FireFox&#39;s relatedTarget.</li>
+<li><a href="http://help.dottoro.com/ljltrsom.php"><code>toElement</code></a> Equivalent to FireFox&#39;s relatedTarget.</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/explicitOriginalTarget"><code>explicitOriginalTarget</code></a> FireFox specific and should not be used as they are non-standard.</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/originalTarget"><code>originalTarget</code></a> FireFox specific and should not be used as they are non-standard.</li>
 </ul>
+<p><a name="data-object"></a></p>
+<h3 id="data-object">Data Object</h3>
+<p>When triggering an event a <code>data</code> object may be passed containing any type of data. The data object is then attached to the browser provided <code>EventObject</code>. Accessing it is as simple as <code>event.data</code> like so...</p>
+<pre class="hljs"><code><span class="hljs-comment">// interaction handler</span>
+Interaction.addHandler(<span class="hljs-string">"some_handler_name"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+    <span class="hljs-keyword">var</span> data = e.data; <span class="hljs-comment">// [1, 2, 3]</span>
+    <span class="hljs-comment">// do something with data...</span>
+});
+
+<span class="hljs-comment">// trigger interaction</span>
+Interaction.trigger(<span class="hljs-string">"some_handler_name"</span>, {
+    <span class="hljs-string">"data"</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]
+});</code></pre><p><strong>Note</strong>: When event delegation is used provide the correct <a href="#targets-object">target elements</a> so the event&#39;s handler works as expected (as if it was naturally invoked). Providing the necessary target elements will allow the <a href="#delegation-targets">interaction&#39;s filter functions</a> to pass and in turn invoke the handler.</p>
 <p><a name="instance-methods-long"></a></p>
 <h3 id="instance-methods">Instance Methods</h3>
 <p><a name="instance-methods-id"></a>
-➜ <strong>instance.id(<code>id</code>)</strong> &mdash; Set the interaction ID.</p>
+➜ <strong>instance.id(<code>id</code>)</strong> &mdash; Set the interaction id.</p>
 <ul class="list">
 <li><code>id</code> (<code>String</code>, <em>Required</em>)<ul class="list">
-<li><strong>Note</strong>: The provided ID must be unique.</li>
-<li>ID is used to access the interaction to remove, enable/disable, trigger, etc.</li>
+<li><strong>Note</strong>: The provided id must be unique.</li>
+<li>id is used to access the interaction to remove, enable/disable, trigger, etc.</li>
 </ul>
 </li>
 <li><strong>Returns</strong> instance.</li>
@@ -281,7 +303,7 @@ Interaction.addHandler(<span class="hljs-string">"filer_name"</span>, <span clas
 ➜ <strong>instance.on(<code>eventName</code>, <code>eventNameN...</code>)</strong> &mdash; The events to listen for.</p>
 <ul class="list">
 <li><code>eventName</code> (<code>String</code>, <em>Required</em>)<ul class="list">
-<li><strong>Note</strong>: <code>n</code> amount of events can be passed.</li>
+<li><strong>Note</strong>: <code>n</code> amount of events may be passed.</li>
 </ul>
 </li>
 <li><strong>Returns</strong> instance.</li>
@@ -290,7 +312,7 @@ Interaction.addHandler(<span class="hljs-string">"filer_name"</span>, <span clas
 ➜ <strong>instance.namespace(<code>namespace</code>)</strong> &mdash; The namespace the events should be under.</p>
 <ul class="list">
 <li><code>namespace</code> (<code>String</code>, <em>Required</em>)<ul class="list">
-<li><strong>Note</strong>: Namespace can be nested. Just use dots to separate each namespace.</li>
+<li><strong>Note</strong>: Namespace may be nested. Just use dots to separate each namespace.</li>
 </ul>
 </li>
 <li><strong>Returns</strong> instance.</li>
@@ -299,17 +321,17 @@ Interaction.addHandler(<span class="hljs-string">"filer_name"</span>, <span clas
 ➜ <strong>instance.anchors(<code>element</code>, <code>elementN...</code>)</strong> &mdash; The elements to attach the events to.</p>
 <ul class="list">
 <li><code>element</code> (<code>HTMLElement</code>, <em>Required</em>)<ul class="list">
-<li><strong>Note</strong>: <code>n</code> amount of elements can be passed.</li>
+<li><strong>Note</strong>: <code>n</code> amount of elements may be passed.</li>
 </ul>
 </li>
 <li><strong>Returns</strong> instance.</li>
 </ul>
 <pre class="hljs"><code><span class="hljs-keyword">var</span> $cont = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"cont"</span>);
 interaction.anchors(<span class="hljs-built_in">document</span>, <span class="hljs-built_in">window</span>, $cont);</code></pre><p><a name="instance-methods-filters"></a>
-➜ <strong>instance.filters(<code>filter</code>, <code>filterN...</code>)</strong> &mdash; If using event delegation, filters can be used to filter out the wanted element(s).</p>
+➜ <strong>instance.filters(<code>filter</code>, <code>filterN...</code>)</strong> &mdash; If using event delegation, filters may be used to filter out the wanted element(s).</p>
 <ul class="list">
 <li><code>filter</code> (<code>String</code>, <em>Required</em>)<ul class="list">
-<li><strong>Note</strong>: <code>n</code> amount of filters can be passed.</li>
+<li><strong>Note</strong>: <code>n</code> amount of filters may be passed.</li>
 </ul>
 </li>
 <li><strong>Returns</strong> instance.</li>
@@ -342,14 +364,14 @@ If not provided the count is set to <code>Infinity</code>.</p>
 <li><code>time</code> (<code>Number</code>, <em>Required</em>)</li>
 <li><strong>Returns</strong> instance.</li>
 </ul>
-<p><strong>Note</strong>: The event can be throttled or debounced but not both.</p>
+<p><strong>Note</strong>: The event may be throttled or debounced but not both.</p>
 <pre class="hljs"><code>interaction.debounce(<span class="hljs-number">250</span>);</code></pre><p><a name="instance-methods-throttle"></a>
 ➜ <strong>instance.throttle(<code>time</code>)</strong> &mdash; Should the event be throttled?</p>
 <ul class="list">
 <li><code>time</code> (<code>Number</code>, <em>Required</em>)</li>
 <li><strong>Returns</strong> instance.</li>
 </ul>
-<p><strong>Note</strong>: The event can be throttled or debounced but not both.</p>
+<p><strong>Note</strong>: The event may be throttled or debounced but not both.</p>
 <pre class="hljs"><code>interaction.throttle(<span class="hljs-number">250</span>);</code></pre><p><a name="instance-methods-handler"></a>
 ➜ <strong>instance.handler(<code>handlerName</code>)</strong> &mdash; The event handler.</p>
 <ul class="list">
@@ -372,7 +394,7 @@ If not provided the count is set to <code>Infinity</code>.</p>
 ➜ <strong>instance.reset(<code>propName</code>, <code>propNameN...</code>)</strong> &mdash; Resets properties to its default.</p>
 <ul class="list">
 <li><code>propName</code> (<code>String</code>, <em>Required</em>)<ul class="list">
-<li><strong>Note</strong>: <code>n</code> amount of property names can be passed.</li>
+<li><strong>Note</strong>: <code>n</code> amount of property names may be passed.</li>
 </ul>
 </li>
 <li><strong>Returns</strong> instance.</li>
@@ -380,11 +402,11 @@ If not provided the count is set to <code>Infinity</code>.</p>
 <p><strong>Note</strong>: This method is really meant to be used when cloning an interaction as it resets a property that is needed to change.</p>
 <pre class="hljs"><code><span class="hljs-keyword">var</span> interaction = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Main Body Click."</span>, <span class="hljs-string">"custom"</span>)
     .reset(<span class="hljs-string">"id"</span>) <span class="hljs-comment">// reset the id</span>
-    .id(<span class="hljs-string">"test456"</span>) <span class="hljs-comment">// add new ID</span>
+    .id(<span class="hljs-string">"test456"</span>) <span class="hljs-comment">// add new id</span>
     .enable();</code></pre><p><a name="usage"></a></p>
 <h3 id="usage">Usage</h3>
 <p>For a better understanding check out <code>index.html</code> and <code>js/source/test.js</code>. <code>js/source/test.js</code> contains examples showing how the library is used.</p>
-<p><strong>Note:</strong> <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is used in the filters for the <code>js/source/test.js</code> examples as well as in the examples below. <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering can be done using VanillaJS. The library is just very useful for filtering elements.</p>
+<p><strong>Note:</strong> <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is used in the filters for the <code>js/source/test.js</code> examples as well as in the examples below. <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering may be done using VanillaJS. The library is just very useful for filtering elements.</p>
 <p><strong>Note</strong>: The following are just examples and is not an exhaustive list of the supported events. The library is just a wrapper for the <code>addEventListener</code>. Therefore, all native JavaScript events may be used.</p>
 <p><a name="example-overview"></a>
 <strong>Overview</strong> &mdash; Usage overview.</p>
@@ -428,7 +450,7 @@ If not provided the count is set to <code>Infinity</code>.</p>
     <span class="hljs-comment">// .debounce(300) // &lt;-- *debounce or throttle heavy interactions*</span>
     .fireCount(<span class="hljs-number">20</span>)
     .enable();</code></pre><ul class="list">
-<li><strong>Note</strong>: Heavy events like the resize event should be throttled or debounced when used as they can hamper and bog down the user&#39;s browser. </li>
+<li><strong>Note</strong>: Heavy events like the resize event should be throttled or debounced when used as they may hamper and bog down the user&#39;s browser.</li>
 </ul>
 <p><a name="example-mousewheel-event"></a>
 <strong>MouseWheel Event</strong> &mdash; Simple scroll event example.</p>
@@ -442,10 +464,10 @@ If not provided the count is set to <code>Infinity</code>.</p>
     .handler(<span class="hljs-string">"body_mouswheel"</span>)
     .fireCount(<span class="hljs-number">10</span>)
     .enable();</code></pre><ul class="list">
-<li><strong>Note</strong>: The <code>mousewheel</code> can be used for all browsers. Internally the correct <code>mousewheel</code> or <code>DOMMouseScroll</code> event will be applied.</li>
+<li><strong>Note</strong>: The <code>mousewheel</code> may be used for all browsers. Internally the correct <code>mousewheel</code> or <code>DOMMouseScroll</code> event will be applied.</li>
 </ul>
 <p><a name="example-cloning-event"></a>
-<strong>Cloning Event</strong> &mdash; Interactions can also be cloned.</p>
+<strong>Cloning Event</strong> &mdash; Interactions may also be cloned.</p>
 <ul class="list">
 <li><strong>Note</strong>: A cloned interaction will use the source interaction&#39;s handler unless reset and updated to a new handler.</li>
 </ul>
@@ -454,7 +476,7 @@ If not provided the count is set to <code>Infinity</code>.</p>
     .reset(<span class="hljs-string">"id"</span>)
     .id(<span class="hljs-string">"intWindowResizeClone"</span>)
     .enable();</code></pre><p><a name="example-custom-event"></a>
-<strong>Custom Event</strong> &mdash; Custom events can also be created.</p>
+<strong>Custom Event</strong> &mdash; Custom events may also be created.</p>
 <pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"custom_event"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Custom Event!"</span>, filter_name);
     <span class="hljs-comment">// logic...</span>
@@ -470,7 +492,7 @@ If not provided the count is set to <code>Infinity</code>.</p>
 <p><a name="example-event-delegation"></a>
 <strong>Event Delegation</strong> &mdash; Some examples using the library for event delegation.</p>
 <ul class="list">
-<li><strong>Note</strong>: Event delegation requires the use of filter functions. Filter functions are middleware functions because they only serve to filter the wanted target element. Only when a target element passes a filter will the interaction&#39;s handler be invoked. The passing target can then be accessed from within the handler via the <a href="#delegation-targets">targets object (second parameter)</a>.</li>
+<li><strong>Note</strong>: Event delegation requires the use of filter functions. Filter functions are middleware functions because they only serve to filter the wanted target element. Only when a target element passes a filter will the interaction&#39;s handler be invoked. The passing target may then be accessed from within the handler via the <a href="#delegation-targets">targets object (second parameter)</a>.</li>
 </ul>
 <p><a name="example-mouseenter-event"></a>
 <strong>Mouseenter Event</strong> &mdash; Library provided mouseenter event.</p>
