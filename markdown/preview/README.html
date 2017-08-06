@@ -24,10 +24,10 @@
 </ul>
 </li>
 <li><a href="#usage">Usage</a><ul class="list">
-<li><a href="#example-overview">Overview</a><ul class="list">
+<li><a href="#example-overview">Overview</a></li>
 <li><a href="#example-click-event">Click Event</a></li>
 <li><a href="#example-resize-event">Resize Event</a></li>
-<li><a href="#example-scroll-event">Scroll Event</a></li>
+<li><a href="#example-mousewheel-event">MouseWheel Event</a></li>
 <li><a href="#example-cloning-event">Cloning Event</a></li>
 <li><a href="#example-custom-event">Custom Event</a></li>
 <li><a href="#example-event-delegation">Event Delegation</a><ul class="list">
@@ -38,9 +38,11 @@
 <li><a href="#example-click-delegation-2">Click Delegation Example 2</a></li>
 </ul>
 </li>
+<li><a href="#example-triggering">Triggering</a><ul class="list">
+<li><a href="#triggering-no-delegation">No Delegation</a></li>
+<li><a href="#triggering-delegation">Delegation</a></li>
 </ul>
 </li>
-<li><a href="#example-triggering">Triggering</a></li>
 </ul>
 </li>
 <li><a href="#contributing">Contributing</a></li>
@@ -247,12 +249,12 @@ Interaction.interactionsFor(<span class="hljs-built_in">document</span>.getEleme
     .id(<span class="hljs-string">"test456"</span>) <span class="hljs-comment">// add new ID</span>
     .enable();</code></pre><p><a name="delegation-targets"></a></p>
 <h3 id="delegation-(targets)">Delegation (targets)</h3>
-<p>The library provides a normalized object with the event&#39;s target elements. This object can be accessed as the second parameter like so...</p>
+<p>The library provides a normalized <code>targets</code> object with the event&#39;s target elements. This object can be accessed as the second parameter like so...</p>
 <pre class="hljs"><code>Interaction.addFilter(<span class="hljs-string">"filer_name"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{ <span class="hljs-comment">/*logic*/</span> });
 Interaction.addHandler(<span class="hljs-string">"filer_name"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{ <span class="hljs-comment">/*logic*/</span> });</code></pre><p>Additionally, when event delegation is used the name of the filter function that passed, if any, is returned. This is useful when multiple filter functions are used for a single interaction. The passing filter will always be passed as the third parameter.</p>
 <p><a name="targets-object"></a></p>
 <h3 id="targets-object">Targets Object</h3>
-<p>The targets object contains the following targets (elements):</p>
+<p>The <code>targets</code> object contains the following targets (elements):</p>
 <ul class="list">
 <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/target"><code>target</code></a> The element that trigger/dispatched the event </li>
 <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget"><code>currentTarget</code></a> Always refers to the element that the event handler was attached to</li>
@@ -384,7 +386,8 @@ If not provided the count is set to <code>Infinity</code>.</p>
 <p>For a better understanding check out <code>index.html</code> and <code>js/source/test.js</code>. <code>js/source/test.js</code> contains examples showing how the library is used.</p>
 <p><strong>Note:</strong> <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is used in the filters for the <code>js/source/test.js</code> examples as well as in the examples below. <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering can be done using VanillaJS. The library is just very useful for filtering elements.</p>
 <p><strong>Note</strong>: The following are just examples and is not an exhaustive list of the supported events. The library is just a wrapper for the <code>addEventListener</code>. Therefore, all native JavaScript events may be used.</p>
-<p><strong>Overview</strong> &mdash; Usage overview.</p>
+<p><a name="example-overview"></a>
+<strong>Overview</strong> &mdash; Usage overview.</p>
 <ul class="list">
 <li>Using interactions work in one of two patterns:<ul class="list">
 <li>No event delegation:<ul class="list">
@@ -427,8 +430,8 @@ If not provided the count is set to <code>Infinity</code>.</p>
     .enable();</code></pre><ul class="list">
 <li><strong>Note</strong>: Heavy events like the resize event should be throttled or debounced when used as they can hamper and bog down the user&#39;s browser. </li>
 </ul>
-<p><a name="example-scroll-event"></a>
-<strong>Scroll Event</strong> &mdash; Simple scroll event example.</p>
+<p><a name="example-mousewheel-event"></a>
+<strong>MouseWheel Event</strong> &mdash; Simple scroll event example.</p>
 <pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"body_mouswheel"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Body scroll!"</span>, filter_name);
     <span class="hljs-comment">// logic...</span>
@@ -467,7 +470,7 @@ If not provided the count is set to <code>Infinity</code>.</p>
 <p><a name="example-event-delegation"></a>
 <strong>Event Delegation</strong> &mdash; Some examples using the library for event delegation.</p>
 <ul class="list">
-<li><strong>Note</strong>: Event delegation requires the use of filter functions. Filter functions can be thought of as middleware functions because they only serve to filter the wanted target element. Only when a target element passes the filter will the interaction&#39;s handler be invoked. The passing target can then be accessed from within the handler via the targets object (second parameter). </li>
+<li><strong>Note</strong>: Event delegation requires the use of filter functions. Filter functions are middleware functions because they only serve to filter the wanted target element. Only when a target element passes a filter will the interaction&#39;s handler be invoked. The passing target can then be accessed from within the handler via the <a href="#delegation-targets">targets object (second parameter)</a>.</li>
 </ul>
 <p><a name="example-mouseenter-event"></a>
 <strong>Mouseenter Event</strong> &mdash; Library provided mouseenter event.</p>
@@ -516,7 +519,7 @@ Interaction.addFilter(<span class="hljs-string">"container_mouseleave"</span>, <
 <li><strong>Note</strong>: When <em>any</em> filter passes the handler gets invoked. The <code>@mouseleave</code> tells the library to treat the mouseover event as a mouseleave.</li>
 </ul>
 <p><a name="example-mouseover-event"></a>
-<strong>Mouseover Event Delegation</strong> &mdash; Mouseover event with event delegation.</p>
+<strong>Mouseover Event</strong> &mdash; Mouseover event with event delegation.</p>
 <pre class="hljs"><code><span class="hljs-comment">// Using FunnelJS, filter and return an element which is of tag type "input.</span>
 Interaction.addFilter(<span class="hljs-string">"input_mouseover"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{
     <span class="hljs-comment">// filter logic</span>
@@ -584,7 +587,8 @@ Interaction.addFilter(<span class="hljs-string">"container_click"</span>, <span 
     .fireCount(<span class="hljs-number">5</span>)
     .enable();</code></pre><p><a name="example-triggering"></a></p>
 <h3 id="triggering-examples">Triggering Examples</h3>
-<p><strong>No Delegation</strong> &mdash; No target elements just the optional data object.</p>
+<p><a name="triggering-no-delegation"></a>
+<strong>No Delegation</strong> &mdash; No target elements just the optional data object.</p>
 <pre class="hljs"><code>Interaction.trigger(<span class="hljs-string">"intCustomEvent"</span>, {
     <span class="hljs-attr">data</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]
 });
@@ -593,7 +597,8 @@ Interaction.trigger(<span class="hljs-string">"intWindowResize"</span>, {
     <span class="hljs-attr">data</span>: <span class="hljs-built_in">Date</span>.now()
 });
 
-Interaction.trigger(<span class="hljs-string">"intBodyScroll"</span>); <span class="hljs-comment">// no options</span></code></pre><p><strong>Delegation</strong> &mdash; Make sure to pass the correct target elements.</p>
+Interaction.trigger(<span class="hljs-string">"intBodyScroll"</span>); <span class="hljs-comment">// no options</span></code></pre><p><a name="triggering-delegation"></a>
+<strong>Delegation</strong> &mdash; Make sure to pass the correct target elements.</p>
 <pre class="hljs"><code>Interaction.trigger(<span class="hljs-string">"intMainBodyClick"</span>, {
     <span class="hljs-attr">targets</span>: {
         <span class="hljs-attr">target</span>: <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"cont"</span>)

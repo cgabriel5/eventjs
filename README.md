@@ -12,18 +12,20 @@ Small library for event handling.
     - [Instance](#instance-api)
 - [Usage](#usage)
     - [Overview](#example-overview)
-        - [Click Event](#example-click-event)
-        - [Resize Event](#example-resize-event)
-        - [Scroll Event](#example-scroll-event)
-        - [Cloning Event](#example-cloning-event)
-        - [Custom Event](#example-custom-event)
-        - [Event Delegation](#example-event-delegation)
-            - [Mouseenter Event](#example-mouseenter-event)
-            - [Mouseleave Event](#example-mouseleave-event)
-            - [Mouseover Event](#example-mouseover-event)
-            - [Click Delegation Example 1](#example-click-delegation-1)
-            - [Click Delegation Example 2](#example-click-delegation-2)
+    - [Click Event](#example-click-event)
+    - [Resize Event](#example-resize-event)
+    - [MouseWheel Event](#example-mousewheel-event)
+    - [Cloning Event](#example-cloning-event)
+    - [Custom Event](#example-custom-event)
+    - [Event Delegation](#example-event-delegation)
+        - [Mouseenter Event](#example-mouseenter-event)
+        - [Mouseleave Event](#example-mouseleave-event)
+        - [Mouseover Event](#example-mouseover-event)
+        - [Click Delegation Example 1](#example-click-delegation-1)
+        - [Click Delegation Example 2](#example-click-delegation-2)
     - [Triggering](#example-triggering)
+        - [No Delegation](#triggering-no-delegation)
+        - [Delegation](#triggering-delegation)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -297,7 +299,7 @@ var interaction = new Interaction("Main Body Click.", "custom")
 <a name="delegation-targets"></a>
 ### Delegation (targets)  
 
-The library provides a normalized object with the event's target elements. This object can be accessed as the second parameter like so...
+The library provides a normalized `targets` object with the event's target elements. This object can be accessed as the second parameter like so...
 
 ```js
 Interaction.addFilter("filer_name", function(e, targets) { /*logic*/ });
@@ -309,7 +311,7 @@ Additionally, when event delegation is used the name of the filter function that
 <a name="targets-object"></a>
 ### Targets Object
 
-The targets object contains the following targets (elements):
+The `targets` object contains the following targets (elements):
 
 - [`target`](https://developer.mozilla.org/en-US/docs/Web/API/Event/target) The element that trigger/dispatched the event 
 - [`currentTarget`](https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget) Always refers to the element that the event handler was attached to
@@ -491,6 +493,7 @@ For a better understanding check out `index.html` and `js/source/test.js`. `js/s
 
 **Note**: The following are just examples and is not an exhaustive list of the supported events. The library is just a wrapper for the `addEventListener`. Therefore, all native JavaScript events may be used.
 
+<a name="example-overview"></a>
 **Overview** &mdash; Usage overview.
 
 - Using interactions work in one of two patterns:
@@ -544,8 +547,8 @@ var event = new Interaction("Window Resize!")
 
 - **Note**: Heavy events like the resize event should be throttled or debounced when used as they can hamper and bog down the user's browser. 
 
-<a name="example-scroll-event"></a>
-**Scroll Event** &mdash; Simple scroll event example.
+<a name="example-mousewheel-event"></a>
+**MouseWheel Event** &mdash; Simple scroll event example.
 
 ```js
 Interaction.addHandler("body_mouswheel", function(e, targets, filter_name) {
@@ -604,7 +607,7 @@ var event = new Interaction("Custom Event")
 <a name="example-event-delegation"></a>
 **Event Delegation** &mdash; Some examples using the library for event delegation.
 
-- **Note**: Event delegation requires the use of filter functions. Filter functions can be thought of as middleware functions because they only serve to filter the wanted target element. Only when a target element passes the filter will the interaction's handler be invoked. The passing target can then be accessed from within the handler via the targets object (second parameter). 
+- **Note**: Event delegation requires the use of filter functions. Filter functions are middleware functions because they only serve to filter the wanted target element. Only when a target element passes a filter will the interaction's handler be invoked. The passing target can then be accessed from within the handler via the [targets object (second parameter)](#delegation-targets).
 
 <a name="example-mouseenter-event"></a>
 **Mouseenter Event** &mdash; Library provided mouseenter event.
@@ -677,7 +680,7 @@ var event = new Interaction("Container Mouseleave")
 - **Note**: When _any_ filter passes the handler gets invoked. The `@mouseleave` tells the library to treat the mouseover event as a mouseleave.
 
 <a name="example-mouseover-event"></a>
-**Mouseover Event Delegation** &mdash; Mouseover event with event delegation.
+**Mouseover Event** &mdash; Mouseover event with event delegation.
 
 ```js
 // Using FunnelJS, filter and return an element which is of tag type "input.
@@ -785,6 +788,7 @@ var event = new Interaction("Second Body Click Interaction")
 <a name="example-triggering"></a>
 ### Triggering Examples
 
+<a name="triggering-no-delegation"></a>
 **No Delegation** &mdash; No target elements just the optional data object.
 
 ```js
@@ -799,6 +803,7 @@ Interaction.trigger("intWindowResize", {
 Interaction.trigger("intBodyScroll"); // no options
 ```
 
+<a name="triggering-delegation"></a>
 **Delegation** &mdash; Make sure to pass the correct target elements.
 
 ```js
