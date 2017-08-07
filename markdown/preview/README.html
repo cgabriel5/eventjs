@@ -271,8 +271,8 @@ Interaction.addHandler(<span class="hljs-string">"filer_name"</span>, <span clas
 <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/srcElement"><code>srcElement</code></a> Avoid using this event target and use <code>e.target</code> as this is just an alias for <code>e.target</code>.</li>
 <li><a href="http://help.dottoro.com/ljjqfjbs.php"><code>fromElement</code></a> Equivalent to FireFox&#39;s relatedTarget.</li>
 <li><a href="http://help.dottoro.com/ljltrsom.php"><code>toElement</code></a> Equivalent to FireFox&#39;s relatedTarget.</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/explicitOriginalTarget"><code>explicitOriginalTarget</code></a> FireFox specific and should not be used as they are non-standard.</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/originalTarget"><code>originalTarget</code></a> FireFox specific and should not be used as they are non-standard.</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/explicitOriginalTarget"><code>explicitOriginalTarget</code></a> FireFox specific and should not be used as is it non-standard.</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/originalTarget"><code>originalTarget</code></a> FireFox specific and should not be used as is it non-standard.</li>
 </ul>
 <p><a name="data-object"></a></p>
 <h3 id="data-object">Data Object</h3>
@@ -454,14 +454,14 @@ If not provided the count is set to <code>Infinity</code>.</p>
 </ul>
 <p><a name="example-mousewheel-event"></a>
 <strong>MouseWheel Event</strong> &mdash; Simple scroll event example.</p>
-<pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"body_mouswheel"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Body scroll!"</span>, filter_name);
+<pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"body_mousewheel"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Body MouseWheel!"</span>, filter_name);
     <span class="hljs-comment">// logic...</span>
-});</code></pre><pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Body Scroll"</span>)
-    .id(<span class="hljs-string">"intBodyScroll"</span>)
+});</code></pre><pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Body MouseWheel"</span>)
+    .id(<span class="hljs-string">"intBodyMouseWheel"</span>)
     .on(<span class="hljs-string">"mousewheel"</span>)
     .anchors(<span class="hljs-built_in">document</span>)
-    .handler(<span class="hljs-string">"body_mouswheel"</span>)
+    .handler(<span class="hljs-string">"body_mousewheel"</span>)
     .fireCount(<span class="hljs-number">10</span>)
     .enable();</code></pre><ul class="list">
 <li><strong>Note</strong>: The <code>mousewheel</code> may be used for all browsers. Internally the correct <code>mousewheel</code> or <code>DOMMouseScroll</code> event will be applied.</li>
@@ -515,7 +515,8 @@ Interaction.addFilter(<span class="hljs-string">"container_mouseover"</span>, <s
     .filters(<span class="hljs-string">"container_mouseover@mouseenter"</span>)
     .handler(<span class="hljs-string">"container_mouseover"</span>)
     .enable();</code></pre><ul class="list">
-<li><strong>Note</strong>: When <em>any</em> filter passes the handler gets invoked. The <code>@mouseenter</code> tells the library to treat the mouseover event as a mouseenter event.</li>
+<li><strong>Note</strong>: When <em>any</em> filter passes the handler gets invoked.</li>
+<li><strong>Note</strong>: The <code>@mouseenter</code> tells the library to treat the mouseover event as a mouseenter event.</li>
 </ul>
 <p><a name="example-mouseleave-event"></a>
 <strong>Mouseleave Event</strong> &mdash; Library provided mouseleave event.</p>
@@ -530,7 +531,7 @@ Interaction.addFilter(<span class="hljs-string">"container_mouseleave"</span>, <
         .classes(<span class="hljs-string">"cont"</span>)
         .getElement();
 });</code></pre><pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"container_mouseleave"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Mouseout!"</span>, filter_name);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Mouseleave!"</span>, filter_name);
     <span class="hljs-comment">// logic...</span>
 });</code></pre><pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Container Mouseleave"</span>)
     .on(<span class="hljs-string">"mouseout"</span>)
@@ -538,7 +539,8 @@ Interaction.addFilter(<span class="hljs-string">"container_mouseleave"</span>, <
     .filters(<span class="hljs-string">"container_mouseleave@mouseleave"</span>)
     .handler(<span class="hljs-string">"container_mouseleave"</span>)
     .enable();</code></pre><ul class="list">
-<li><strong>Note</strong>: When <em>any</em> filter passes the handler gets invoked. The <code>@mouseleave</code> tells the library to treat the mouseover event as a mouseleave.</li>
+<li><strong>Note</strong>: When <em>any</em> filter passes the handler gets invoked.</li>
+<li><strong>Note</strong>: The <code>@mouseleave</code> tells the library to treat the mouseover event as a mouseleave.</li>
 </ul>
 <p><a name="example-mouseover-event"></a>
 <strong>Mouseover Event</strong> &mdash; Mouseover event with event delegation.</p>
@@ -619,7 +621,7 @@ Interaction.trigger(<span class="hljs-string">"intWindowResize"</span>, {
     <span class="hljs-attr">data</span>: <span class="hljs-built_in">Date</span>.now()
 });
 
-Interaction.trigger(<span class="hljs-string">"intBodyScroll"</span>); <span class="hljs-comment">// no options</span></code></pre><p><a name="triggering-delegation"></a>
+Interaction.trigger(<span class="hljs-string">"intBodyMouseWheel"</span>); <span class="hljs-comment">// no options</span></code></pre><p><a name="triggering-delegation"></a>
 <strong>Delegation</strong> &mdash; Make sure to pass the correct target elements.</p>
 <pre class="hljs"><code>Interaction.trigger(<span class="hljs-string">"intMainBodyClick"</span>, {
     <span class="hljs-attr">targets</span>: {

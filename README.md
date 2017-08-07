@@ -333,8 +333,8 @@ The `targets` object contains the following targets (elements):
 - [`srcElement`](https://developer.mozilla.org/en-US/docs/Web/API/Event/srcElement) Avoid using this event target and use `e.target` as this is just an alias for `e.target`.
 - [`fromElement`](http://help.dottoro.com/ljjqfjbs.php) Equivalent to FireFox's relatedTarget.
 - [`toElement`](http://help.dottoro.com/ljltrsom.php) Equivalent to FireFox's relatedTarget.
-- [`explicitOriginalTarget`](https://developer.mozilla.org/en-US/docs/Web/API/Event/explicitOriginalTarget) FireFox specific and should not be used as they are non-standard.
-- [`originalTarget`](https://developer.mozilla.org/en-US/docs/Web/API/Event/originalTarget) FireFox specific and should not be used as they are non-standard.
+- [`explicitOriginalTarget`](https://developer.mozilla.org/en-US/docs/Web/API/Event/explicitOriginalTarget) FireFox specific and should not be used as is it non-standard.
+- [`originalTarget`](https://developer.mozilla.org/en-US/docs/Web/API/Event/originalTarget) FireFox specific and should not be used as is it non-standard.
 
 <a name="data-object"></a>
 ### Data Object
@@ -585,18 +585,18 @@ var event = new Interaction("Window Resize!")
 **MouseWheel Event** &mdash; Simple scroll event example.
 
 ```js
-Interaction.addHandler("body_mouswheel", function(e, targets, filter_name) {
-    console.log("Body scroll!", filter_name);
+Interaction.addHandler("body_mousewheel", function(e, targets, filter_name) {
+    console.log("Body MouseWheel!", filter_name);
     // logic...
 });
 ```
 
 ```js
-var event = new Interaction("Body Scroll")
-    .id("intBodyScroll")
+var event = new Interaction("Body MouseWheel")
+    .id("intBodyMouseWheel")
     .on("mousewheel")
     .anchors(document)
-    .handler("body_mouswheel")
+    .handler("body_mousewheel")
     .fireCount(10)
     .enable();
 ```
@@ -676,7 +676,8 @@ var event = new Interaction("Container Mouseenter")
     .enable();
 ```
 
-- **Note**: When _any_ filter passes the handler gets invoked. The `@mouseenter` tells the library to treat the mouseover event as a mouseenter event.
+- **Note**: When _any_ filter passes the handler gets invoked.
+- **Note**: The `@mouseenter` tells the library to treat the mouseover event as a mouseenter event.
 
 <a name="example-mouseleave-event"></a>
 **Mouseleave Event** &mdash; Library provided mouseleave event.
@@ -697,7 +698,7 @@ Interaction.addFilter("container_mouseleave", function(e, targets) {
 
 ```js
 Interaction.addHandler("container_mouseleave", function(e, targets, filter_name) {
-    console.log("Mouseout!", filter_name);
+    console.log("Mouseleave!", filter_name);
     // logic...
 });
 ```
@@ -711,7 +712,8 @@ var event = new Interaction("Container Mouseleave")
     .enable();
 ```
 
-- **Note**: When _any_ filter passes the handler gets invoked. The `@mouseleave` tells the library to treat the mouseover event as a mouseleave.
+- **Note**: When _any_ filter passes the handler gets invoked.
+- **Note**: The `@mouseleave` tells the library to treat the mouseover event as a mouseleave.
 
 <a name="example-mouseover-event"></a>
 **Mouseover Event** &mdash; Mouseover event with event delegation.
@@ -834,7 +836,7 @@ Interaction.trigger("intWindowResize", {
     data: Date.now()
 });
 
-Interaction.trigger("intBodyScroll"); // no options
+Interaction.trigger("intBodyMouseWheel"); // no options
 ```
 
 <a name="triggering-delegation"></a>
