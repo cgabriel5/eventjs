@@ -1408,7 +1408,7 @@ document.onreadystatechange = function() {
             .handler("second_body_click")
             .fireCount(5)
             .enable();
-        // Mutation - Mutation event with event delegation
+        // Mutation - Mutation event with event delegation.
         // Using FunnelJS, filter and return an element that has the class "mutation-wrapper".
         Interaction.addFilter("mutation_delegation", function(e, targets) {
             // filter logic

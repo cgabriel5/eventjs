@@ -181,6 +181,29 @@ document.onreadystatechange = function() {
             .handler("second_body_click")
             .fireCount(5)
             .enable();
+        // Mutation - Mutation event with event delegation.
+        // Using FunnelJS, filter and return an element that has the class "mutation-wrapper".
+        Interaction.addFilter("mutation_delegation", function(e, targets) {
+            // filter logic
+            var parents = Funnel(targets.target)
+                .parents()
+                .getStack();
+            return Funnel(targets.target)
+                .concat(parents)
+                .classes("mutation-wrapper")
+                .getElement();
+        });
+        Interaction.addHandler("mutation_delegation", function(e, targets, filter_name) {
+            console.log("Mutation!", [e.detail.__MUTATION_RECORD__, targets, filter_name]);
+            // logic...
+        });
+        var event = new Interaction("Mutation Example")
+            .id("mutationTest")
+            .on("mutation")
+            .anchors(document)
+            .handler("mutation_delegation")
+            .filters("mutation_delegation")
+            .enable();
         // Triggering Examples
         // No Delegation - No target elements just the optional data object.
         Interaction.trigger("intCustomEvent", {
