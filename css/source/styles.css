@@ -13,3 +13,9 @@
     background: lightblue;
     position: absolute;
 }
+
+.mutation-wrapper {
+    padding: 20px;
+    background: antiquewhite;
+    border: 2px solid cornflowerblue;
+}
