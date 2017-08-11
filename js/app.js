@@ -251,11 +251,13 @@
             }
         };
         /**
-         * @description [Function removes the provided event from provided anchor element.]
+         * @description [Function creates the internally used handler for the event, throttles/debounces if need be, and
+         *               attaches the event to the anchor.]
          * @param  {Object} _            [The Interaction object to work with.]
          * @param  {String} id           [The ID of the Interaction object.]
          * @param  {HTMLElement} anchor  [The anchor element to unbind event from.]
          * @param  {String} event        [The event to remove.]
+         * @param  {String} event_type   [The events constructor type.]
          * @param  {String} namespace    [The event namespace.]
          * @param  {Number} fire_count   [The amount of times the handler should fire.]
          * @param  {Function} handler    [The event handler.]
@@ -263,7 +265,7 @@
          * @param  {Array} filters       [The filters that should be run when using delegation.]
          * @return {Undefined}     [Nothing is returned.]
          */
-        function create_event(_, id, anchor, event, namespace, fire_count, handler, options, filters) {
+        function create_event(_, id, anchor, event, event_type, namespace, fire_count, handler, options, filters) {
             // the user's event handler gets wrapped with a function to apply
             // libray logic such as: filters (delegation) and fireCount.
             var fn = function(e) {
@@ -307,7 +309,16 @@
                     "originalTarget": (e.originalTarget || null)
                 };
                 // get the provided (synthetic targets) and combine with the above targets object
+                // **Note**: synthetic elements are only provided on trigger events
                 if (e.targets) targets = Object.assign(targets, e.targets);
+                // check whether it's a mutation event. if so, reset the target & srcElement to the mutation targets
+                if (e.detail && e.detail.__MUTATION_RECORD__) {
+                    var detail = e.detail.__MUTATION_RECORD__;
+                    targets = Object.assign(targets, {
+                        "target": detail.target,
+                        "srcElement": detail.target
+                    });
+                }
                 // define vars
                 var delegate, filter_name;
                 // run provided filters
@@ -365,7 +376,7 @@
                 // if the fireCount zeroes, zeroe the Interaction (remove)
                 if (_.properties.fireCount <= 0) return zeroed(_);
             };
-            // check if the user wants the event debounce or throttled
+            // check if the user wants the event debounced or throttled
             var options_ = _.options,
                 debounce_ = options_.debounce,
                 throttle_ = options_.throttle;
@@ -375,6 +386,40 @@
             if (throttle_) fn = throttle(fn, throttle_);
             // add the event
             anchor.addEventListener(event, fn, options);
+            // MutationObserver::START
+            // if event is a LibraryEvent (mutation) add setup a MutationObserver
+            if (event_type === "LibraryEvent") {
+                // [https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver]
+                // create the mutation observer
+                var observer = new MutationObserver(function(mutations) {
+                    // loop over the mutations
+                    for (var i = 0, l = mutations.length; i < l; i++) {
+                        var mutation = mutations[i];
+                        // [https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events]
+                        // [https://developer.mozilla.org/en-US/docs/Web/API/Event/Event]
+                        // [https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent]
+                        // [https://stackoverflow.com/a/19345563]
+                        // trigger the custom event
+                        anchor.dispatchEvent(new CustomEvent(event, {
+                            // provide the mutation record object via the custom events
+                            // detail data property.
+                            detail: {
+                                "__MUTATION_RECORD__": mutation
+                            }
+                        }));
+                    }
+                });
+                // pass in the target node, as well as the observer options
+                observer.observe(anchor, {
+                    "attributes": true,
+                    "childList": true,
+                    "characterData": true,
+                    "subtree": true,
+                    "attributeOldValue": true,
+                    "characterDataOldValue": true
+                });
+            }
+            // MutationObserver::END
             // add the new handler to the properties
             if (!_.properties.handlers) _.properties.handlers = [];
             _.properties.handlers.push(fn);
@@ -461,7 +506,7 @@
             "constructor__": function(name, clone_interaction_id) {
                 // if user does not invoke library with new keyword we use it for them by
                 // returning a new instance of the library with the new keyword.
-                if (!(this instanceof Library)) return new Library();
+                if (!(this instanceof Library)) return new Library(name, clone_interaction_id);
                 // cloning vars
                 var parent, parent_options;
                 // if cloning...get the interactions options
@@ -553,17 +598,22 @@
                     // [https://developer.mozilla.org/en-US/docs/Web/Events#Standard_events]
                     var UIEvent = " abort error load resize scroll select unload ",
                         MouseEvent = " click contextmenu dblclick mousedown mouseenter mouseleave mousemove mouseout mouseover mouseup show ",
+                        // custom library events list:
+                        // supports a primitive mutation implementation w/ possible future support of the bottom custom events:
+                        // dimensionchange widthchange heightchange contentflowchange contentoverflow contentunderflow
+                        LibraryEvent = " mutation ",
                         func;
                     for (var i = 0, l = args.length; i < l; i++) {
                         // cache the current event
-                        var event = args[i];
+                        var event = args[i].toLowerCase();
                         // check if a function constructor name was provided
                         // if one was provided, that one will be used. otherwise,
                         // we do our best to determine what to use.
                         if (event.charAt(0) !== ":") {
                             // determine what best to use...
-                            if (-~UIEvent.indexOf(event)) func = "UIEvent";
-                            else if (-~MouseEvent.indexOf(event)) func = "MouseEvent";
+                            if (-~UIEvent.indexOf(" " + event + " ")) func = "UIEvent";
+                            else if (-~MouseEvent.indexOf(" " + event + " ")) func = "MouseEvent";
+                            else if (-~LibraryEvent.indexOf(" " + event + " ")) func = "LibraryEvent";
                             else func = "Event"; // default
                         } else func = "CustomEvent";
                         // amend the argument
@@ -812,9 +862,11 @@
                             // loop over events
                             for (var j = 0, ll = events.length; j < ll; j++) {
                                 // cache the current event
-                                var event = events[j][0];
+                                var event = events[j];
+                                var event_name = event[0];
+                                var event_type = event[1];
                                 // attach the event
-                                create_event(_, id, anchor, event, namespace, fire_count, handler, options_, filters);
+                                create_event(_, id, anchor, event_name, event_type, namespace, fire_count, handler, options_, filters);
                             }
                         }
                     }
@@ -968,13 +1020,25 @@
      */
     function create_event_object(type, func, anchor, options) {
         // create the event object
-        var event = new window[func](type, Object.assign({
-            "bubbles": true,
-            "cancelable": false,
-            "scoped": false,
-            "composed": false,
-            // "detail": data // a custom "data" property is used instead (▼ below)
-        }, (options.options || {})));
+        var event;
+        if (func === "LibraryEvent") { // mutation event
+            event = new CustomEvent(type, {
+                detail: {
+                    "data": (options.data || null)
+                }
+            });
+        } else { // custom event via constructor
+            event = new window[func](type, Object.assign({
+                "bubbles": true,
+                "cancelable": false,
+                "scoped": false,
+                "composed": false,
+                // "detail": data // a custom "data" property is used instead (▼ below)
+            }, (options.options || {})));
+        }
+        // add the func type to distinguish in Library.trigger() if it's a LibraryEvent or
+        // an actual EventConstructor --> new window[func]...
+        event.syntheticType = func;
         // add custom properties to synthetic event object
         //
         // custom isSynthetic property denotes the event is a synthetic event
@@ -1026,7 +1090,11 @@
                 // create the event object
                 var event = create_event_object(events[j][0], events[j][1], anchors[i], options);
                 // call the event handler
-                handler.call(event, event);
+                if (event.syntheticType === "LibraryEvent") {
+                    anchors[i].dispatchEvent(event);
+                } else { // CustomEvent made with constructor
+                    handler.call(event, event);
+                }
             }
         }
     };
@@ -1339,6 +1407,29 @@ document.onreadystatechange = function() {
             .filters("container_click")
             .handler("second_body_click")
             .fireCount(5)
+            .enable();
+        // Mutation - Mutation event with event delegation
+        // Using FunnelJS, filter and return an element that has the class "mutation-wrapper".
+        Interaction.addFilter("mutation_delegation", function(e, targets) {
+            // filter logic
+            var parents = Funnel(targets.target)
+                .parents()
+                .getStack();
+            return Funnel(targets.target)
+                .concat(parents)
+                .classes("mutation-wrapper")
+                .getElement();
+        });
+        Interaction.addHandler("mutation_delegation", function(e, targets, filter_name) {
+            console.log("Mutation!", [e.detail.__MUTATION_RECORD__, targets, filter_name]);
+            // logic...
+        });
+        var event = new Interaction("Mutation Example")
+            .id("mutationTest")
+            .on("mutation")
+            .anchors(document)
+            .handler("mutation_delegation")
+            .filters("mutation_delegation")
             .enable();
         // Triggering Examples
         // No Delegation - No target elements just the optional data object.

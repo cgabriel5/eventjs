@@ -63,13 +63,25 @@ library.interaction = function(id) {
  */
 function create_event_object(type, func, anchor, options) {
     // create the event object
-    var event = new window[func](type, Object.assign({
-        "bubbles": true,
-        "cancelable": false,
-        "scoped": false,
-        "composed": false,
-        // "detail": data // a custom "data" property is used instead (▼ below)
-    }, (options.options || {})));
+    var event;
+    if (func === "LibraryEvent") { // mutation event
+        event = new CustomEvent(type, {
+            detail: {
+                "data": (options.data || null)
+            }
+        });
+    } else { // custom event via constructor
+        event = new window[func](type, Object.assign({
+            "bubbles": true,
+            "cancelable": false,
+            "scoped": false,
+            "composed": false,
+            // "detail": data // a custom "data" property is used instead (▼ below)
+        }, (options.options || {})));
+    }
+    // add the func type to distinguish in Library.trigger() if it's a LibraryEvent or
+    // an actual EventConstructor --> new window[func]...
+    event.syntheticType = func;
     // add custom properties to synthetic event object
     //
     // custom isSynthetic property denotes the event is a synthetic event
@@ -121,7 +133,11 @@ library.trigger = function(id) {
             // create the event object
             var event = create_event_object(events[j][0], events[j][1], anchors[i], options);
             // call the event handler
-            handler.call(event, event);
+            if (event.syntheticType === "LibraryEvent") {
+                anchors[i].dispatchEvent(event);
+            } else { // CustomEvent made with constructor
+                handler.call(event, event);
+            }
         }
     }
 };

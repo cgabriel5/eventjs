@@ -9,7 +9,7 @@ var Library = class__({
     "constructor__": function(name, clone_interaction_id) {
         // if user does not invoke library with new keyword we use it for them by
         // returning a new instance of the library with the new keyword.
-        if (!(this instanceof Library)) return new Library();
+        if (!(this instanceof Library)) return new Library(name, clone_interaction_id);
         // cloning vars
         var parent, parent_options;
         // if cloning...get the interactions options
@@ -101,17 +101,22 @@ var Library = class__({
             // [https://developer.mozilla.org/en-US/docs/Web/Events#Standard_events]
             var UIEvent = " abort error load resize scroll select unload ",
                 MouseEvent = " click contextmenu dblclick mousedown mouseenter mouseleave mousemove mouseout mouseover mouseup show ",
+                // custom library events list:
+                // supports a primitive mutation implementation w/ possible future support of the bottom custom events:
+                // dimensionchange widthchange heightchange contentflowchange contentoverflow contentunderflow
+                LibraryEvent = " mutation ",
                 func;
             for (var i = 0, l = args.length; i < l; i++) {
                 // cache the current event
-                var event = args[i];
+                var event = args[i].toLowerCase();
                 // check if a function constructor name was provided
                 // if one was provided, that one will be used. otherwise,
                 // we do our best to determine what to use.
                 if (event.charAt(0) !== ":") {
                     // determine what best to use...
-                    if (-~UIEvent.indexOf(event)) func = "UIEvent";
-                    else if (-~MouseEvent.indexOf(event)) func = "MouseEvent";
+                    if (-~UIEvent.indexOf(" " + event + " ")) func = "UIEvent";
+                    else if (-~MouseEvent.indexOf(" " + event + " ")) func = "MouseEvent";
+                    else if (-~LibraryEvent.indexOf(" " + event + " ")) func = "LibraryEvent";
                     else func = "Event"; // default
                 } else func = "CustomEvent";
                 // amend the argument
@@ -360,9 +365,11 @@ var Library = class__({
                     // loop over events
                     for (var j = 0, ll = events.length; j < ll; j++) {
                         // cache the current event
-                        var event = events[j][0];
+                        var event = events[j];
+                        var event_name = event[0];
+                        var event_type = event[1];
                         // attach the event
-                        create_event(_, id, anchor, event, namespace, fire_count, handler, options_, filters);
+                        create_event(_, id, anchor, event_name, event_type, namespace, fire_count, handler, options_, filters);
                     }
                 }
             }

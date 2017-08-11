@@ -63,11 +63,13 @@ var checks = {
     }
 };
 /**
- * @description [Function removes the provided event from provided anchor element.]
+ * @description [Function creates the internally used handler for the event, throttles/debounces if need be, and
+ *               attaches the event to the anchor.]
  * @param  {Object} _            [The Interaction object to work with.]
  * @param  {String} id           [The ID of the Interaction object.]
  * @param  {HTMLElement} anchor  [The anchor element to unbind event from.]
  * @param  {String} event        [The event to remove.]
+ * @param  {String} event_type   [The events constructor type.]
  * @param  {String} namespace    [The event namespace.]
  * @param  {Number} fire_count   [The amount of times the handler should fire.]
  * @param  {Function} handler    [The event handler.]
@@ -75,7 +77,7 @@ var checks = {
  * @param  {Array} filters       [The filters that should be run when using delegation.]
  * @return {Undefined}     [Nothing is returned.]
  */
-function create_event(_, id, anchor, event, namespace, fire_count, handler, options, filters) {
+function create_event(_, id, anchor, event, event_type, namespace, fire_count, handler, options, filters) {
     // the user's event handler gets wrapped with a function to apply
     // libray logic such as: filters (delegation) and fireCount.
     var fn = function(e) {
@@ -119,7 +121,16 @@ function create_event(_, id, anchor, event, namespace, fire_count, handler, opti
             "originalTarget": (e.originalTarget || null)
         };
         // get the provided (synthetic targets) and combine with the above targets object
+        // **Note**: synthetic elements are only provided on trigger events
         if (e.targets) targets = Object.assign(targets, e.targets);
+        // check whether it's a mutation event. if so, reset the target & srcElement to the mutation targets
+        if (e.detail && e.detail.__MUTATION_RECORD__) {
+            var detail = e.detail.__MUTATION_RECORD__;
+            targets = Object.assign(targets, {
+                "target": detail.target,
+                "srcElement": detail.target
+            });
+        }
         // define vars
         var delegate, filter_name;
         // run provided filters
@@ -177,7 +188,7 @@ function create_event(_, id, anchor, event, namespace, fire_count, handler, opti
         // if the fireCount zeroes, zeroe the Interaction (remove)
         if (_.properties.fireCount <= 0) return zeroed(_);
     };
-    // check if the user wants the event debounce or throttled
+    // check if the user wants the event debounced or throttled
     var options_ = _.options,
         debounce_ = options_.debounce,
         throttle_ = options_.throttle;
@@ -187,6 +198,40 @@ function create_event(_, id, anchor, event, namespace, fire_count, handler, opti
     if (throttle_) fn = throttle(fn, throttle_);
     // add the event
     anchor.addEventListener(event, fn, options);
+    // MutationObserver::START
+    // if event is a LibraryEvent (mutation) add setup a MutationObserver
+    if (event_type === "LibraryEvent") {
+        // [https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver]
+        // create the mutation observer
+        var observer = new MutationObserver(function(mutations) {
+            // loop over the mutations
+            for (var i = 0, l = mutations.length; i < l; i++) {
+                var mutation = mutations[i];
+                // [https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events]
+                // [https://developer.mozilla.org/en-US/docs/Web/API/Event/Event]
+                // [https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent]
+                // [https://stackoverflow.com/a/19345563]
+                // trigger the custom event
+                anchor.dispatchEvent(new CustomEvent(event, {
+                    // provide the mutation record object via the custom events
+                    // detail data property.
+                    detail: {
+                        "__MUTATION_RECORD__": mutation
+                    }
+                }));
+            }
+        });
+        // pass in the target node, as well as the observer options
+        observer.observe(anchor, {
+            "attributes": true,
+            "childList": true,
+            "characterData": true,
+            "subtree": true,
+            "attributeOldValue": true,
+            "characterDataOldValue": true
+        });
+    }
+    // MutationObserver::END
     // add the new handler to the properties
     if (!_.properties.handlers) _.properties.handlers = [];
     _.properties.handlers.push(fn);
