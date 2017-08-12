@@ -24,25 +24,7 @@
 </ul>
 </li>
 <li><a href="#usage">Usage</a><ul class="list">
-<li><a href="#example-overview">Overview</a></li>
-<li><a href="#example-click-event">Click Event</a></li>
-<li><a href="#example-resize-event">Resize Event</a></li>
-<li><a href="#example-mousewheel-event">MouseWheel Event</a></li>
-<li><a href="#example-cloning-event">Cloning Event</a></li>
-<li><a href="#example-custom-event">Custom Event</a></li>
-<li><a href="#example-event-delegation">Event Delegation</a><ul class="list">
-<li><a href="#example-mouseenter-event">Mouseenter Event</a></li>
-<li><a href="#example-mouseleave-event">Mouseleave Event</a></li>
-<li><a href="#example-mouseover-event">Mouseover Event</a></li>
-<li><a href="#example-click-delegation-1">Click Delegation Example 1</a></li>
-<li><a href="#example-click-delegation-2">Click Delegation Example 2</a></li>
-</ul>
-</li>
-<li><a href="#example-triggering">Triggering</a><ul class="list">
-<li><a href="#triggering-no-delegation">No Delegation</a></li>
-<li><a href="#triggering-delegation">Delegation</a></li>
-</ul>
-</li>
+<li><a href="#usage-examples">Examples</a></li>
 </ul>
 </li>
 <li><a href="#contributing">Contributing</a></li>
@@ -220,6 +202,7 @@ Interaction.interactionsFor(<span class="hljs-built_in">document</span>.getEleme
 <li><a href="#delegation-targets">Delegation (targets)</a></li>
 <li><a href="#targets-object">Targets Object</a></li>
 <li><a href="#data-object">Data Object</a></li>
+<li><a href="#mutation-event">Mutation Event</a></li>
 <li><a href="#instance-methods-id">➜ instance.id()</a></li>
 <li><a href="#instance-methods-on">➜ instance.on()</a></li>
 <li><a href="#instance-methods-namespace">➜ instance.namespace()</a></li>
@@ -287,6 +270,20 @@ Interaction.addHandler(<span class="hljs-string">"some_handler_name"</span>, <sp
 Interaction.trigger(<span class="hljs-string">"some_handler_name"</span>, {
     <span class="hljs-string">"data"</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]
 });</code></pre><p><strong>Note</strong>: When event delegation is used provide the correct <a href="#targets-object">target elements</a> so the event&#39;s handler works as expected (as if it was naturally invoked). Providing the necessary target elements will allow the <a href="#delegation-targets">interaction&#39;s filter functions</a> to pass and in turn invoke the handler.</p>
+<p><a name="mutation-event"></a></p>
+<h3 id="mutation-event">Mutation Event</h3>
+<p>The library provides the use of a special <code>mutation</code> event. This event is made possible by incorporating the <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver"><code>MutationObserver</code> API</a>. Therefore, the browser must support the API to be able to use it.</p>
+<p>The event can be used like any other event as shown below. In this example, the event is attached to the <code>document</code> so when <strong>any</strong> type of change occurs the handler will run.</p>
+<p><strong>Note</strong>: Although similar to other events there is a difference to be aware of. The <code>MutationObserver</code> API provides a <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord"><code>MutationRecord</code> object</a> when any change has been made to the element the event is attached to. The object may accessed from within the handler via the browser provided <code>EventObject</code> as <code>e.detail.__MUTATION_RECORD__</code>.</p>
+<pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"mutation"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Mutation!"</span>, [e.detail.__MUTATION_RECORD__, targets, filter_name]);
+    <span class="hljs-comment">// logic...</span>
+});
+<span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Mutation Example"</span>)
+    .on(<span class="hljs-string">"mutation"</span>)
+    .anchors(<span class="hljs-built_in">document</span>)
+    .handler(<span class="hljs-string">"mutation"</span>)
+    .enable();</code></pre><p>An example of the <code>mutation</code> event with event delegation can be found <a href="#example-mutation-delegation">here</a>.</p>
 <p><a name="instance-methods-long"></a></p>
 <h3 id="instance-methods">Instance Methods</h3>
 <p><a name="instance-methods-id"></a>
@@ -405,9 +402,37 @@ If not provided the count is set to <code>Infinity</code>.</p>
     .id(<span class="hljs-string">"test456"</span>) <span class="hljs-comment">// add new id</span>
     .enable();</code></pre><p><a name="usage"></a></p>
 <h3 id="usage">Usage</h3>
-<p>For a better understanding check out <code>index.html</code> and <code>js/source/test.js</code>. <code>js/source/test.js</code> contains examples showing how the library is used.</p>
-<p><strong>Note:</strong> <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is used in the filters for the <code>js/source/test.js</code> examples as well as in the examples below. <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering may be done using VanillaJS. The library is just very useful for filtering elements.</p>
-<p><strong>Note</strong>: The following are just examples and is not an exhaustive list of the supported events. The library is just a wrapper for the <code>addEventListener</code>. Therefore, all native JavaScript events may be used.</p>
+<p>Check out <code>index.html</code> and open up the console to see the examples shown below in action. The examples are located in <code>js/source/test.js</code>.</p>
+<p><strong>Note:</strong> <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is used in the filters of the examples. <a href="https://github.com/cgabriel5/funneljs">FunnelJS</a> is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is only to filter out the target element(s) provided to it. Although used, it is not required as the filtering may be done using VanillaJS. However, the library makes filtering a breeze.</p>
+<p><strong>Note</strong>: The following are just examples and is not an exhaustive list of the supported events. The library is just a wrapper for the <code>addEventListener</code>.</p>
+<p><a name="usage-examples-toc"></a></p>
+<ul class="list">
+<li><a href="#usage-examples">Examples</a><ul class="list">
+<li><a href="#example-overview">Overview</a></li>
+<li><a href="#example-click-event">Click Event</a></li>
+<li><a href="#example-resize-event">Resize Event</a></li>
+<li><a href="#example-mousewheel-event">MouseWheel Event</a></li>
+<li><a href="#example-cloning-event">Cloning Event</a></li>
+<li><a href="#example-custom-event">Custom Event</a></li>
+<li><a href="#example-event-delegation">Event Delegation</a><ul class="list">
+<li><a href="#example-mouseenter-event">Mouseenter Event</a></li>
+<li><a href="#example-mouseleave-event">Mouseleave Event</a></li>
+<li><a href="#example-mouseover-event">Mouseover Event</a></li>
+<li><a href="#example-click-delegation-1">Click Delegation Example 1</a></li>
+<li><a href="#example-click-delegation-2">Click Delegation Example 2</a></li>
+<li><a href="#example-mutation-delegation">Mutation Delegation</a></li>
+</ul>
+</li>
+<li><a href="#example-triggering">Triggering</a><ul class="list">
+<li><a href="#triggering-no-delegation">No Delegation</a></li>
+<li><a href="#triggering-delegation">Delegation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><a name="usage-examples"></a></p>
+<h3 id="examples">Examples</h3>
 <p><a name="example-overview"></a>
 <strong>Overview</strong> &mdash; Usage overview.</p>
 <ul class="list">
@@ -609,6 +634,28 @@ Interaction.addFilter(<span class="hljs-string">"container_click"</span>, <span 
     .filters(<span class="hljs-string">"container_click"</span>)
     .handler(<span class="hljs-string">"second_body_click"</span>)
     .fireCount(<span class="hljs-number">5</span>)
+    .enable();</code></pre><p><a name="example-mutation-delegation"></a>
+<strong>Mutation Delegation</strong> &mdash; Mutation event with event delegation.</p>
+<p><strong>Note</strong>: Using the <code>mutation</code> event requires the browser to support the <code>MutationObserver</code> API. More information about the mutation event can be found <a href="#mutation-event">here</a>. </p>
+<pre class="hljs"><code><span class="hljs-comment">// Using FunnelJS, filter and return an element that has the class "mutation-wrapper".</span>
+Interaction.addFilter(<span class="hljs-string">"mutation_delegation"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets</span>) </span>{
+    <span class="hljs-comment">// filter logic</span>
+    <span class="hljs-keyword">var</span> parents = Funnel(targets.target)
+        .parents()
+        .getStack();
+    <span class="hljs-keyword">return</span> Funnel(targets.target)
+        .concat(parents)
+        .classes(<span class="hljs-string">"mutation-wrapper"</span>)
+        .getElement();
+});</code></pre><pre class="hljs"><code>Interaction.addHandler(<span class="hljs-string">"mutation_delegation"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e, targets, filter_name</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Mutation!"</span>, [e.detail.__MUTATION_RECORD__, targets, filter_name]);
+    <span class="hljs-comment">// logic...</span>
+});</code></pre><pre class="hljs"><code><span class="hljs-keyword">var</span> event = <span class="hljs-keyword">new</span> Interaction(<span class="hljs-string">"Mutation Example"</span>)
+    .id(<span class="hljs-string">"mutationTest"</span>)
+    .on(<span class="hljs-string">"mutation"</span>)
+    .anchors(<span class="hljs-built_in">document</span>)
+    .handler(<span class="hljs-string">"mutation_delegation"</span>)
+    .filters(<span class="hljs-string">"mutation_delegation"</span>)
     .enable();</code></pre><p><a name="example-triggering"></a></p>
 <h3 id="triggering-examples">Triggering Examples</h3>
 <p><a name="triggering-no-delegation"></a>

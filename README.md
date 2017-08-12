@@ -11,21 +11,7 @@ Small library for event handling.
     - [Global](#global-api)
     - [Instance](#instance-api)
 - [Usage](#usage)
-    - [Overview](#example-overview)
-    - [Click Event](#example-click-event)
-    - [Resize Event](#example-resize-event)
-    - [MouseWheel Event](#example-mousewheel-event)
-    - [Cloning Event](#example-cloning-event)
-    - [Custom Event](#example-custom-event)
-    - [Event Delegation](#example-event-delegation)
-        - [Mouseenter Event](#example-mouseenter-event)
-        - [Mouseleave Event](#example-mouseleave-event)
-        - [Mouseover Event](#example-mouseover-event)
-        - [Click Delegation Example 1](#example-click-delegation-1)
-        - [Click Delegation Example 2](#example-click-delegation-2)
-    - [Triggering](#example-triggering)
-        - [No Delegation](#triggering-no-delegation)
-        - [Delegation](#triggering-delegation)
+    - [Examples](#usage-examples)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -259,6 +245,7 @@ Interaction.removeHandler("filer_name");
     - [Delegation (targets)](#delegation-targets)
     - [Targets Object](#targets-object)
     - [Data Object](#data-object)
+    - [Mutation Event](#mutation-event)
     - [➜ instance.id()](#instance-methods-id)
     - [➜ instance.on()](#instance-methods-on)
     - [➜ instance.namespace()](#instance-methods-namespace)
@@ -309,7 +296,7 @@ var interaction = new Interaction("Main Body Click.", "custom")
 ```
 
 <a name="delegation-targets"></a>
-### Delegation (targets)  
+### Delegation (targets)
 
 The library provides a normalized `targets` object with the event's target elements. This object may be accessed as the second parameter like so...
 
@@ -355,6 +342,29 @@ Interaction.trigger("some_handler_name", {
 ```
 
 **Note**: When event delegation is used provide the correct [target elements](#targets-object) so the event's handler works as expected (as if it was naturally invoked). Providing the necessary target elements will allow the [interaction's filter functions](#delegation-targets) to pass and in turn invoke the handler.
+
+<a name="mutation-event"></a>
+### Mutation Event
+
+The library provides the use of a special `mutation` event. This event is made possible by incorporating the [`MutationObserver` API](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver). Therefore, the browser must support the API to be able to use it.
+
+The event can be used like any other event as shown below. In this example, the event is attached to the `document` so when **any** type of change occurs the handler will run.
+
+**Note**: Although similar to other events there is a difference to be aware of. The `MutationObserver` API provides a [`MutationRecord` object](https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord) when any change has been made to the element the event is attached to. The object may accessed from within the handler via the browser provided `EventObject` as `e.detail.__MUTATION_RECORD__`.
+
+```js
+Interaction.addHandler("mutation", function(e, targets, filter_name) {
+    console.log("Mutation!", [e.detail.__MUTATION_RECORD__, targets, filter_name]);
+    // logic...
+});
+var event = new Interaction("Mutation Example")
+    .on("mutation")
+    .anchors(document)
+    .handler("mutation")
+    .enable();
+```
+
+An example of the `mutation` event with event delegation can be found [here](#example-mutation-delegation).
 
 <a name="instance-methods-long"></a>
 ### Instance Methods
@@ -521,11 +531,33 @@ var interaction = new Interaction("Main Body Click.", "custom")
 <a name="usage"></a>
 ### Usage
 
-For a better understanding check out `index.html` and `js/source/test.js`. `js/source/test.js` contains examples showing how the library is used.
+Check out `index.html` and open up the console to see the examples shown below in action. The examples are located in `js/source/test.js`.
 
-**Note:** [FunnelJS](https://github.com/cgabriel5/funneljs) is used in the filters for the `js/source/test.js` examples as well as in the examples below. [FunnelJS](https://github.com/cgabriel5/funneljs) is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is to filter out the target element(s) provided to it. Although used, it is not necessary as the filtering may be done using VanillaJS. The library is just very useful for filtering elements.
+**Note:** [FunnelJS](https://github.com/cgabriel5/funneljs) is used in the filters of the examples. [FunnelJS](https://github.com/cgabriel5/funneljs) is a simple, standalone, lightweight JavaScript selector engine. Its use in these examples is only to filter out the target element(s) provided to it. Although used, it is not required as the filtering may be done using VanillaJS. However, the library makes filtering a breeze.
 
-**Note**: The following are just examples and is not an exhaustive list of the supported events. The library is just a wrapper for the `addEventListener`. Therefore, all native JavaScript events may be used.
+**Note**: The following are just examples and is not an exhaustive list of the supported events. The library is just a wrapper for the `addEventListener`.
+
+<a name="usage-examples-toc"></a>
+- [Examples](#usage-examples)
+    - [Overview](#example-overview)
+    - [Click Event](#example-click-event)
+    - [Resize Event](#example-resize-event)
+    - [MouseWheel Event](#example-mousewheel-event)
+    - [Cloning Event](#example-cloning-event)
+    - [Custom Event](#example-custom-event)
+    - [Event Delegation](#example-event-delegation)
+        - [Mouseenter Event](#example-mouseenter-event)
+        - [Mouseleave Event](#example-mouseleave-event)
+        - [Mouseover Event](#example-mouseover-event)
+        - [Click Delegation Example 1](#example-click-delegation-1)
+        - [Click Delegation Example 2](#example-click-delegation-2)
+        - [Mutation Delegation](#example-mutation-delegation)
+    - [Triggering](#example-triggering)
+        - [No Delegation](#triggering-no-delegation)
+        - [Delegation](#triggering-delegation)
+
+<a name="usage-examples"></a>
+### Examples
 
 <a name="example-overview"></a>
 **Overview** &mdash; Usage overview.
@@ -818,6 +850,42 @@ var event = new Interaction("Second Body Click Interaction")
     .filters("container_click")
     .handler("second_body_click")
     .fireCount(5)
+    .enable();
+```
+
+<a name="example-mutation-delegation"></a>
+**Mutation Delegation** &mdash; Mutation event with event delegation.
+
+**Note**: Using the `mutation` event requires the browser to support the `MutationObserver` API. More information about the mutation event can be found [here](#mutation-event). 
+
+```js
+// Using FunnelJS, filter and return an element that has the class "mutation-wrapper".
+Interaction.addFilter("mutation_delegation", function(e, targets) {
+    // filter logic
+    var parents = Funnel(targets.target)
+        .parents()
+        .getStack();
+    return Funnel(targets.target)
+        .concat(parents)
+        .classes("mutation-wrapper")
+        .getElement();
+});
+```
+
+```js
+Interaction.addHandler("mutation_delegation", function(e, targets, filter_name) {
+    console.log("Mutation!", [e.detail.__MUTATION_RECORD__, targets, filter_name]);
+    // logic...
+});
+```
+
+```js
+var event = new Interaction("Mutation Example")
+    .id("mutationTest")
+    .on("mutation")
+    .anchors(document)
+    .handler("mutation_delegation")
+    .filters("mutation_delegation")
     .enable();
 ```
 
