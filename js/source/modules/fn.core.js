@@ -222,6 +222,8 @@ function create_event(_, id, anchor, event, event_type, namespace, fire_count, h
             }
         });
         // pass in the target node, as well as the observer options
+        // [add way to allow the passage of an options method to let user pick
+        // what mutations to listen to??]
         observer.observe(anchor, {
             "attributes": true,
             "childList": true,
@@ -230,6 +232,8 @@ function create_event(_, id, anchor, event, event_type, namespace, fire_count, h
             "attributeOldValue": true,
             "characterDataOldValue": true
         });
+        // attach observer to internally made function handler to be able disconnect later
+        fn.observer = observer;
     }
     // MutationObserver::END
     // add the new handler to the properties
@@ -252,6 +256,8 @@ function create_event(_, id, anchor, event, event_type, namespace, fire_count, h
 function remove_event(_, anchor, event, handler, options) {
     // remove the event
     anchor.removeEventListener(event, handler, options);
+    // stop observing mutations if a mutation observer is present
+    if (handler.observer) handler.observer.disconnect();
 }
 /**
  * @description [When an event has zeroed, when the fireCount is not set to
